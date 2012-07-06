@@ -82,9 +82,15 @@ $.fn.cycle = function(options, arg2) {
 		var $slides = opts.slideExpr ? $(opts.slideExpr, this) : $cont.children();
 		var els = $slides.get();
 
-		if (els.length < 2) {
-			log('terminating; too few slides: ' + els.length);
-			return;
+		// Duplicate slides if only 2 elements for seamless forward and backward movement.
+		if (els.length < 3) {
+		  $cont.children().clone().addClass('cycle-touchmod-inserted').appendTo($cont);
+		  $slides = opts.slideExpr ? $(opts.slideExpr, this) : $cont.children();
+  		els = $slides.get();
+  		if (els.length < 2) {
+  			log('terminating; too few slides: ' + els.length);
+  			return;
+  		}
 		}
 
 		var opts2 = buildOptions($cont, $slides, els, opts, o);
@@ -224,6 +230,10 @@ function destroy(cont, opts) {
 		});
 
 	//destory touchmod
+	
+	// Destroy cloned elements for short slideshows.
+	$('.cycle-touchmod-inserted').remove();
+	
 	if ( opts.touchFx ) {
 		destroyTouch(cont, opts);
 	}
