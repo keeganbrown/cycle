@@ -10,7 +10,23 @@
 	<meta name="viewport" content="width=device-width">
 
 	<link rel="stylesheet" href="stylesheets/style.css">
-
+	<script type="text/javascript">
+		if(!window.firebug){
+			window.firebug=document.createElement("script");
+			firebug.setAttribute("src","http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js");
+			document.body.appendChild(firebug);
+			(function(){
+				if(window.firebug.version){
+					firebug.init()
+				}else{
+					setTimeout(arguments.callee)}
+			})();
+			void (firebug);
+			if(window.debug&&debug.setCallback){
+				(function(){if(window.firebug&&window.firebug.version){debug.setCallback(function(b){var a=Array.prototype.slice.call(arguments,1);firebug.d.console.cmd[b].apply(window,a)},true)}else{setTimeout(arguments.callee,100)}})();
+			}
+		}
+	</script>
 	<script src="javascripts/jquery.min.js"></script>
 </head>
 <body>
@@ -56,29 +72,12 @@
 	</div>
 </div>
 
-<script type="text/javascript">
-	if(!window.firebug){
-		window.firebug=document.createElement("script");
-		firebug.setAttribute("src","http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js");
-		document.body.appendChild(firebug);
-		(function(){
-			if(window.firebug.version){
-				firebug.init()
-			}else{
-				setTimeout(arguments.callee)}
-		})();
-		void (firebug);
-		if(window.debug&&debug.setCallback){
-			(function(){if(window.firebug&&window.firebug.version){debug.setCallback(function(b){var a=Array.prototype.slice.call(arguments,1);firebug.d.console.cmd[b].apply(window,a)},true)}else{setTimeout(arguments.callee,100)}})();
-		}
-	}
-</script>
-
 <script src="javascripts/jquery.cycle.all.js"></script>
 <script type="text/javascript">
 
 $(document).ready(function () {
 	console.log('test');
+	$.fn.cycle.debug = true;
 	$('#cycle').cycle({
 		fx: 'scrollHorz',
 		speed: 500,
