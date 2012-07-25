@@ -487,6 +487,13 @@ function integrateTouch (opts, cont) {
 		var dragMove = function (event) {
 			window.cycle_touchMoveCurrentPos = getTouchPos(event);
 			event.preventDefault();
+			
+		  // Fix to allow touch scrolling. Added by Grady.
+		  var scrollDif = window.cycle_touchMoveCurrentPos.pageY - initPos.pageY;
+      
+      if ( dragstate == 'locked' ) {
+        $(window).scrollTop($(window).scrollTop() - scrollDif);
+      }
 		}
 
 		window.cycle_touchMoveCurrentPos = getTouchPos();
