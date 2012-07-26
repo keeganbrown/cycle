@@ -86,7 +86,7 @@ $(function () {
 			transformOrigin: "50% 50%",
 			transform: "rotateY(0deg) translate3d(0,0,0)",
 			transitionProperty : String($.support['transform']).toLowerCase().replace(/(\w+)(?=transform)/,'-$1-') + ', left',
-			transitionDuration : '0s'
+			transitionDuration : 0
 		});
 
 		$cont.css({
@@ -249,7 +249,7 @@ $(function () {
 			$( [ prevElem[0], currElem[0], nextElem[0] ] ).css({
 				transform: 'rotateY(0deg) translate3d(0,0,0)',
 				transformStyle: 'preserve-3d',
-				transitionDuration: '0ms',
+				transitionDuration: 0,
 				transitionProperty: String($.support['transform']).toLowerCase().replace(/(\w+)(?=transform)/,'-$1-')
 			});
 
@@ -264,8 +264,8 @@ $(function () {
 			nextElem.css( {
 				left: (mainContSize.width * dir.x * revdir) + currStart.x,
 				top: (mainContSize.height * dir.y * revdir) + currStart.y,
-				transform: 'rotateY(0deg)',
-				transitionDuration: '0ms',
+				transform: 'rotateY(0deg) translate3d(0,0,0)',
+				transitionDuration: 0,
 				transformOrigin: nextdir,
 				display: 'block', opacity: 1
 			} );
@@ -326,7 +326,7 @@ $(function () {
 			left: ( ( -mainContSize.width + diffPos.pageX ) * dir.x ) + currStart.x,
 			top: ( ( -mainContSize.height + diffPos.pageY ) * dir.y ) + currStart.y,
 			transform: ('rotateY('+flex.prev.roty+'deg) translate3d(0,0,0)'),
-			transitionDuration: '0ms',
+			transitionDuration: 0,
 			transformOrigin: flex.prev.org,
 			display: flex.prev.disp, opacity: 1
 		} );
@@ -335,7 +335,7 @@ $(function () {
 			left: ( ( 0 + diffPos.pageX ) * dir.x ) + currStart.x,
 			top: ( ( 0 + diffPos.pageY ) * dir.y ) + currStart.y,
 			transform: ('rotateY('+( (diffPos.pageX/mainContSize.width)*90 )+'deg) translate3d(0,0,0)'),
-			transitionDuration: '0ms',
+			transitionDuration: 0,
 			transformOrigin: tnsOrg,
 			display: 'block', opacity: 1
 		} );
@@ -344,7 +344,7 @@ $(function () {
 			left: ( ( mainContSize.width + diffPos.pageX ) * dir.x ) + currStart.x,
 			top: ( ( mainContSize.height + diffPos.pageY ) * dir.y ) + currStart.y,
 			transform: ('rotateY('+flex.next.roty+'deg) translate3d(0,0,0)'),
-			transitionDuration: '0ms',
+			transitionDuration: 0,
 			transformOrigin: flex.next.org,
 			display: flex.next.disp, opacity: 1
 		} );

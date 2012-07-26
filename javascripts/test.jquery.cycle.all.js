@@ -9,7 +9,7 @@
  *
  * Touch Support integration features ( "TOUCHMOD" )
  * TOUCHMOD Requires: jQuery v1.4.3 or later
- * Modified By: Keegan Brown -- TOUCHMOD Version: 0.9.5 (26-JULY-2012)
+ * Modified By: Keegan Brown -- TOUCHMOD Version: 0.9.4 (20-JUNE-2012)
  *
  */
 ;(function($, undefined) {
@@ -404,7 +404,7 @@ function integrateTouch (opts, cont) {
 			revdir = ( !!opts.rev ) ?  -1 : 1;
 
 
-		//TOUCHMOD -- ADD CSS RULES TO PREVENT ODD BEHAVIOR, EG SELECTING TEXT WHILE TOUCHMOVE
+		//TOUCHMOD -- ADD CSS RULES TO HELP ENGAGE iOS Hardware Acceleration
 		$(opts.elements).css( { userSelect: 'none', userModify: 'read-only', userDrag: 'none', tapHighlightColor: 'transparent' } );
 
 		//TOUCHMOD -- TOUCH BEHAVIOR INITIALIZATION
@@ -413,7 +413,7 @@ function integrateTouch (opts, cont) {
 		//TOUCHMOD -- TOUCH TRANSITION & ASSOCIATED OPTIONS
 		if ( !!opts.touchFx && !!$.fn.cycle.transitions[opts.touchFx] ) {
 			touchFx = opts.touchFx;
-			dir = ( !!$.fn.cycle.transitions[opts.touchFx].activeDir ) ? $.fn.cycle.transitions[opts.touchFx].activeDir : { x: 1, y: 0 };
+			dir = $.fn.cycle.transitions[opts.touchFx].activeDir || { x: 1, y: 0 };
 			if ( !!dir.x ) {
 				changeCycle = (mainContSize.width/4);
 			} else if ( !!dir.y )  {
@@ -465,8 +465,7 @@ function integrateTouch (opts, cont) {
 		var dragFrameTick = function () {
 			var currPos = window.cycle_touchMoveCurrentPos;
 			if ( dragstate !== 'dragging' && !!opts.touchMinDrag &&
-				( Math.abs( diffPos.pageX ) * dir.y > opts.touchMinDrag ||
-					Math.abs( diffPos.pageY ) * dir.x > opts.touchMinDrag ) ) {
+				( Math.abs( diffPos.pageX ) * dir.y > opts.touchMinDrag || Math.abs( diffPos.pageY ) * dir.x > opts.touchMinDrag ) ) {
 				dragstate = 'locked';
 			}
 			if ( !!!opts.busy && dragging && dragstate !== 'locked' ) {
@@ -487,9 +486,14 @@ function integrateTouch (opts, cont) {
 
 		var dragMove = function (event) {
 			window.cycle_touchMoveCurrentPos = getTouchPos(event);
-			if ( dragstate === 'locked' ) {
-				event.preventDefault();
-			}
+			event.preventDefault();
+			
+		  // Fix to allow touch scrolling. Added by Grady.
+		  var scrollDif = window.cycle_touchMoveCurrentPos.pageY - initPos.pageY;
+      
+      if ( dragstate == 'locked' ) {
+        $(window).scrollTop($(window).scrollTop() - scrollDif);
+      }
 		}
 
 		window.cycle_touchMoveCurrentPos = getTouchPos();
