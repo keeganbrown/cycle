@@ -487,7 +487,7 @@ function integrateTouch (opts, cont) {
 
 		var dragMove = function (event) {
 			window.cycle_touchMoveCurrentPos = getTouchPos(event);
-			if ( dragstate === 'locked' ) {
+			if ( dragstate !== 'locked' ) {
 				event.preventDefault();
 			}
 		}
