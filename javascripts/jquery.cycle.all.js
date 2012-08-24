@@ -459,6 +459,8 @@ function integrateTouch (opts, cont) {
 
 				dragging = true;
 				dragstate = null;
+
+				event.preventDefault();
 			}
 		}
 
@@ -487,15 +489,19 @@ function integrateTouch (opts, cont) {
 
 		var dragMove = function (event) {
 			window.cycle_touchMoveCurrentPos = getTouchPos(event);
-			event.preventDefault();
-
-			// allow touch scrolling.
-			var scrollDifX = ( window.cycle_touchMoveCurrentPos.pageX - initPos.pageX ) * dir.y;
-			var scrollDifY = ( window.cycle_touchMoveCurrentPos.pageY - initPos.pageY ) * dir.x;
 
 			if ( dragstate === 'locked' ) {
-				if ( !!scrollDifY ) $(window).scrollTop($(window).scrollTop() - scrollDifY);
-				if ( !!scrollDifX ) $(window).scrollLeft($(window).scrollLeft() - scrollDifX);
+				// allow touch scrolling.
+				var scrollTop = $(window).scrollTop();
+				var scrollLeft = $(window).scrollLeft();
+				if ( !!dir.y && scrollLeft > 0 ) {
+					var scrollDifX = window.cycle_touchMoveCurrentPos.pageX - initPos.pageX;
+					if ( !!scrollDifX) $(window).scrollLeft(scrollLeft - scrollDifX);
+				}
+				if ( !!dir.x && scrollTop > 0 ) {
+					var scrollDifY = window.cycle_touchMoveCurrentPos.pageY - initPos.pageY;
+					if ( !!scrollDifY ) $(window).scrollTop(scrollTop - scrollDifY);
+				}
 			}
 		}
 

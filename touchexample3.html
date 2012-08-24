@@ -118,8 +118,22 @@ $(function () {
 			$.fn.cycle.commonReset(curr,next,opts);
 			$slides.css( { zIndex: "" } );
 
-			opts.cssBefore = {}
-			opts.cssAfter = {}
+			opts.cssBefore = {
+				top: 0,
+				left: pushlen*folddir,
+				display : 'block',
+				transform : 'rotateY('+(90*folddir)+'deg) translate3d(0,0,0)',
+				transitionDuration : 0,
+				transformOrigin : nextdir
+			}
+			opts.cssAfter = {
+				top: 0,
+				left: 0,
+				display : 'block',
+				transform : 'rotateY(0deg) translate3d(0,0,0)',
+				transitionDuration : 0,
+				transformOrigin : orgdir
+			}
 			opts.animIn = {}
 			opts.animOut = {}
 
@@ -256,10 +270,10 @@ $(function () {
 			prevElem.css( {
 				left: (-mainContSize.width * dir.x * revdir) + currStart.x,
 				top: (-mainContSize.height * dir.y * revdir) + currStart.y,
-				display: 'block', opacity: 1
+				transitionDuration: 0, display: 'block', opacity: 1
 			} );
 
-			currElem.css( { transform: 'rotateY(0) translate3d(0,0,0)', transformOrigin: '50% 50%' } );
+			currElem.css( { transform: 'rotateY(0) translate3d(0,0,0)', transitionDuration: 0, transformOrigin: '50% 50%' } );
 
 			nextElem.css( {
 				left: (mainContSize.width * dir.x * revdir) + currStart.x,
