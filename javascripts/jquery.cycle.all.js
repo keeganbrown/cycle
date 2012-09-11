@@ -460,6 +460,9 @@ function integrateTouch (opts, cont) {
 				dragging = true;
 				dragstate = null;
 			}
+			if( navigator.userAgent.match(/android/i) ) {
+				event.preventDefault();
+			}
 		}
 
 		var dragFrameTick = function () {
@@ -482,20 +485,22 @@ function integrateTouch (opts, cont) {
 			}
 			window.requestAnimationFrame( dragFrameTick );
 		}
-		window.requestAnimationFrame( dragFrameTick );
-
 
 		var dragMove = function (event) {
-			window.cycle_touchMoveCurrentPos = getTouchPos(event);
-			event.preventDefault();
-
-			// allow touch scrolling.
-			var scrollDifX = ( window.cycle_touchMoveCurrentPos.pageX - initPos.pageX ) * dir.x;
-			var scrollDifY = ( window.cycle_touchMoveCurrentPos.pageY - initPos.pageY ) * dir.y;
-
 			if ( dragstate === 'locked' ) {
-				if ( !!scrollDifY ) $(window).scrollTop($(window).scrollTop() - scrollDifY);
-				if ( !!scrollDifX ) $(window).scrollLeft($(window).scrollLeft() - scrollDifX);
+				$cont.trigger('touchend');
+				//$cont.trigger('touchcancel');
+			} else {
+				window.cycle_touchMoveCurrentPos = getTouchPos(event);
+				if ( dragstate === 'dragging' ) {
+					if( navigator.userAgent.match(/android/i) ) {
+						var scrollDifX = ( window.cycle_touchMoveCurrentPos.pageX - initPos.pageX ) * dir.y;
+						var scrollDifY = ( window.cycle_touchMoveCurrentPos.pageY - initPos.pageY ) * dir.x;
+						$(window).scrollTop(scrollDifY);
+						$(window).scrollLeft(scrollDifX);
+					}
+					event.preventDefault();
+				}
 			}
 		}
 
@@ -560,6 +565,8 @@ function integrateTouch (opts, cont) {
 				mouseup: dragEnd
 			});
 		}
+
+		dragFrameTick();
 	}
 }
 // END TOUCHMOD SUPPORT HANDLING
