@@ -490,6 +490,7 @@ function integrateTouch (opts, cont) {
 			if ( dragstate === 'locked' ) {
 				//$cont.trigger('touchend');
 				//$cont.trigger('touchcancel');
+				//$cont.trigger('touchcancel');
 				if( navigator.userAgent.match(/android/i) ) {
 					var scrollDifX = ( window.cycle_touchMoveCurrentPos.pageX - initPos.pageX ) * dir.y;
 					var scrollDifY = ( window.cycle_touchMoveCurrentPos.pageY - initPos.pageY ) * dir.x;
