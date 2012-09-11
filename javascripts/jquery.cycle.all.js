@@ -460,20 +460,23 @@ function integrateTouch (opts, cont) {
 				dragging = true;
 				dragstate = null;
 			}
-			/*
-			if( navigator.userAgent.match(/android/gi) ) {
-				var touchHandlerDampen = function (e)
-				{
+			if( navigator.userAgent.match(/android/gi) || location.href.match('testandroid') ) {
+				event.preventDefault();
+			}
+		}
+
+		if( navigator.userAgent.match(/android/gi) ) {
+			var touchHandlerDampen = function (e) {
+				if ( dragging !== 'locked' ) {
 					e.preventDefault();
 					return false;
 				}
-				$(document).bind( {
-					touchstart: touchHandlerDampen,
-					touchmove: touchHandlerDampen,
-					touchend: touchHandlerDampen,
-				});
 			}
-			*/
+			$(document).bind( {
+				touchstart: touchHandlerDampen,
+				touchmove: touchHandlerDampen,
+				touchend: touchHandlerDampen,
+			});
 		}
 
 		var dragFrameTick = function () {
