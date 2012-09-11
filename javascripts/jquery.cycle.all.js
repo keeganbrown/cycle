@@ -488,17 +488,17 @@ function integrateTouch (opts, cont) {
 
 		var dragMove = function (event) {
 			if ( dragstate === 'locked' ) {
-				$cont.trigger('touchend');
+				//$cont.trigger('touchend');
 				//$cont.trigger('touchcancel');
+				if( navigator.userAgent.match(/android/i) ) {
+					var scrollDifX = ( window.cycle_touchMoveCurrentPos.pageX - initPos.pageX ) * dir.y;
+					var scrollDifY = ( window.cycle_touchMoveCurrentPos.pageY - initPos.pageY ) * dir.x;
+					$(window).scrollTop(scrollDifY);
+					$(window).scrollLeft(scrollDifX);
+				}
 			} else {
 				window.cycle_touchMoveCurrentPos = getTouchPos(event);
 				if ( dragstate === 'dragging' ) {
-					if( navigator.userAgent.match(/android/i) ) {
-						var scrollDifX = ( window.cycle_touchMoveCurrentPos.pageX - initPos.pageX ) * dir.y;
-						var scrollDifY = ( window.cycle_touchMoveCurrentPos.pageY - initPos.pageY ) * dir.x;
-						$(window).scrollTop(scrollDifY);
-						$(window).scrollLeft(scrollDifX);
-					}
 					event.preventDefault();
 				}
 			}
