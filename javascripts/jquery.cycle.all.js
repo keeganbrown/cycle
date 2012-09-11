@@ -464,21 +464,7 @@ function integrateTouch (opts, cont) {
 				event.preventDefault();
 			}
 		}
-/*
-		if( navigator.userAgent.match(/android/gi) ) {
-			var touchHandlerDampen = function (e) {
-				if ( dragging !== 'locked' ) {
-					e.preventDefault();
-					return false;
-				}
-			}
-			$(document).bind( {
-				touchstart: touchHandlerDampen,
-				touchmove: touchHandlerDampen,
-				touchend: touchHandlerDampen,
-			});
-		}
-*/
+
 		var dragFrameTick = function () {
 			var currPos = window.cycle_touchMoveCurrentPos;
 			if ( dragstate !== 'dragging' && !!opts.touchMinDrag &&
@@ -503,9 +489,6 @@ function integrateTouch (opts, cont) {
 		var dragMove = function (event) {
 			window.cycle_touchMoveCurrentPos = getTouchPos(event);
 			if ( dragstate === 'locked' ) {
-				//$cont.trigger('touchend');
-				//$cont.trigger('touchcancel');
-				//$cont.trigger('touchcancel');
 				if( navigator.userAgent.match(/android/gi) || location.href.match('testandroid') ) {
 					var scrollDifY = $(window).scrollTop() - ( ( window.cycle_touchMoveCurrentPos.pageY - initPos.pageY ) );
 					$(window).scrollTop(scrollDifY);
