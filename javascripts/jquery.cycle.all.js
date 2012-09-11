@@ -505,17 +505,19 @@ function integrateTouch (opts, cont) {
 			event.preventDefault();
 			if ( dragstate === 'locked' ) {
 				//$cont.trigger('touchend');
-				$cont.trigger('touchcancel');
+				//$cont.trigger('touchcancel');
 				//$cont.trigger('touchcancel');
 				/*
 				if( navigator.userAgent.match(/android/gi) || location.href.match('testandroid') ) {
+				*/
 					var scrollDifY = $(window).scrollTop() - ( ( window.cycle_touchMoveCurrentPos.pageY - initPos.pageY ) );
 					$(window).scrollTop(scrollDifY);
 
 					var scrollDifX = $(window).scrollLeft() - ( ( window.cycle_touchMoveCurrentPos.pageX - initPos.pageX ) * dir.y );
 					$(window).scrollLeft(scrollDifX);
 
-					event.preventDefault();
+					//event.preventDefault();
+				/*
 				}
 				*/
 			} else {
