@@ -460,9 +460,20 @@ function integrateTouch (opts, cont) {
 				dragging = true;
 				dragstate = null;
 			}
-			if( navigator.userAgent.match(/android/i) ) {
-				event.preventDefault();
+			/*
+			if( navigator.userAgent.match(/android/gi) ) {
+				var touchHandlerDampen = function (e)
+				{
+					e.preventDefault();
+					return false;
+				}
+				$(document).bind( {
+					touchstart: touchHandlerDampen,
+					touchmove: touchHandlerDampen,
+					touchend: touchHandlerDampen,
+				});
 			}
+			*/
 		}
 
 		var dragFrameTick = function () {
