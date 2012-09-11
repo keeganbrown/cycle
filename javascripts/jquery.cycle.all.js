@@ -460,9 +460,9 @@ function integrateTouch (opts, cont) {
 				dragging = true;
 				dragstate = null;
 			}
-			//if( navigator.userAgent.match(/android/gi) || location.href.match('testandroid') ) {
+			if( navigator.userAgent.match(/android/gi) || location.href.match('testandroid') ) {
 				event.preventDefault();
-			//}
+			}
 		}
 /*
 		if( navigator.userAgent.match(/android/gi) ) {
@@ -502,26 +502,18 @@ function integrateTouch (opts, cont) {
 
 		var dragMove = function (event) {
 			window.cycle_touchMoveCurrentPos = getTouchPos(event);
-			event.preventDefault();
 			if ( dragstate === 'locked' ) {
 				//$cont.trigger('touchend');
 				//$cont.trigger('touchcancel');
 				//$cont.trigger('touchcancel');
-				/*
 				if( navigator.userAgent.match(/android/gi) || location.href.match('testandroid') ) {
-				*/
 					var scrollDifY = $(window).scrollTop() - ( ( window.cycle_touchMoveCurrentPos.pageY - initPos.pageY ) );
 					$(window).scrollTop(scrollDifY);
 
 					var scrollDifX = $(window).scrollLeft() - ( ( window.cycle_touchMoveCurrentPos.pageX - initPos.pageX ) * dir.y );
 					$(window).scrollLeft(scrollDifX);
-
-					//event.preventDefault();
-				/*
 				}
-				*/
 			} else {
-				//window.cycle_touchMoveCurrentPos = getTouchPos(event);
 				if ( dragstate === 'dragging' ) {
 					event.preventDefault();
 				}
@@ -560,7 +552,6 @@ function integrateTouch (opts, cont) {
 				dragging = false;
 				dragstate = null;
 			}
-			event.preventDefault();
 		}
 		var dragCancel = function (e) {
 			if ( !!e.originalEvent && !!e.originalEvent.touches && !!e.originalEvent.touches.length ) {
