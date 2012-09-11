@@ -491,9 +491,9 @@ function integrateTouch (opts, cont) {
 				//$cont.trigger('touchend');
 				//$cont.trigger('touchcancel');
 				//$cont.trigger('touchcancel');
-				if( navigator.userAgent.match(/android/i) || location.href.match('testandroid') ) {
+				if( navigator.userAgent.match(/android/gi) || location.href.match('testandroid') ) {
 					window.cycle_touchMoveCurrentPos = getTouchPos(event);
-					var scrollDifY = $(window).scrollTop() - ( ( window.cycle_touchMoveCurrentPos.pageY - initPos.pageY ) * dir.x );
+					var scrollDifY = $(window).scrollTop() - ( ( window.cycle_touchMoveCurrentPos.pageY - initPos.pageY ) );
 					$(window).scrollTop(scrollDifY);
 
 					var scrollDifX = $(window).scrollLeft() - ( ( window.cycle_touchMoveCurrentPos.pageX - initPos.pageX ) * dir.y );
