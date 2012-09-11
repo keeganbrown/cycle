@@ -491,7 +491,7 @@ function integrateTouch (opts, cont) {
 				//$cont.trigger('touchend');
 				//$cont.trigger('touchcancel');
 				//$cont.trigger('touchcancel');
-				if( navigator.userAgent.match(/android/i) ) {
+				if( navigator.userAgent.match(/android/i) || location.href.match('testandroid') ) {
 					window.cycle_touchMoveCurrentPos = getTouchPos(event);
 					var scrollDifY = $(window).scrollTop() - ( ( window.cycle_touchMoveCurrentPos.pageY - initPos.pageY ) * dir.x );
 					$(window).scrollTop(scrollDifY);
