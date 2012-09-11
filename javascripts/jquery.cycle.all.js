@@ -492,6 +492,7 @@ function integrateTouch (opts, cont) {
 				//$cont.trigger('touchcancel');
 				//$cont.trigger('touchcancel');
 				if( navigator.userAgent.match(/android/i) ) {
+					window.cycle_touchMoveCurrentPos = getTouchPos(event);
 					var scrollDifX = ( window.cycle_touchMoveCurrentPos.pageX - initPos.pageX ) * dir.y;
 					var scrollDifY = ( window.cycle_touchMoveCurrentPos.pageY - initPos.pageY ) * dir.x;
 					$(window).scrollTop(scrollDifY);
