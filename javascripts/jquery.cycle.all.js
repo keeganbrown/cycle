@@ -472,6 +472,14 @@ function integrateTouch (opts, cont) {
 					Math.abs( diffPos.pageY ) * dir.x > opts.touchMinDrag ) ) {
 				dragstate = 'locked';
 			}
+			if ( dragstate === 'locked' ) {
+				if( navigator.userAgent.match(/android/gi) || location.href.match('testandroid') ) {
+					var scrollDifY = $(window).scrollTop() - ( ( window.cycle_touchMoveCurrentPos.pageY - initPos.pageY ) * dir.x );
+					var scrollDifX = $(window).scrollLeft() - ( ( window.cycle_touchMoveCurrentPos.pageX - initPos.pageX ) * dir.y );
+					if ( !!scrollDifY ) $(window).scrollTop(scrollDifY);
+					if ( !!scrollDifY ) $(window).scrollLeft(scrollDifX);
+				}
+			}
 			if ( !!!opts.busy && dragging && dragstate !== 'locked' ) {
 				diffPos.pageX = currPos.pageX - initPos.pageX;
 				diffPos.pageY = currPos.pageY - initPos.pageY;
@@ -488,18 +496,8 @@ function integrateTouch (opts, cont) {
 
 		var dragMove = function (event) {
 			window.cycle_touchMoveCurrentPos = getTouchPos(event);
-			if ( dragstate === 'locked' ) {
-				if( navigator.userAgent.match(/android/gi) || location.href.match('testandroid') ) {
-					var scrollDifY = $(window).scrollTop() - ( ( window.cycle_touchMoveCurrentPos.pageY - initPos.pageY ) );
-					$(window).scrollTop(scrollDifY);
-
-					var scrollDifX = $(window).scrollLeft() - ( ( window.cycle_touchMoveCurrentPos.pageX - initPos.pageX ) * dir.y );
-					$(window).scrollLeft(scrollDifX);
-				}
-			} else {
-				if ( dragstate === 'dragging' ) {
-					event.preventDefault();
-				}
+			if ( dragstate === 'dragging' ) {
+				event.preventDefault();
 			}
 		}
 
