@@ -460,9 +460,7 @@ function integrateTouch (opts, cont) {
 				dragging = true;
 				dragstate = null;
 			}
-			if( navigator.userAgent.match(/android/gi) || location.href.match('testandroid') ) {
-				event.preventDefault();
-			}
+			//event.preventDefault();
 		}
 
 		var dragFrameTick = function () {
