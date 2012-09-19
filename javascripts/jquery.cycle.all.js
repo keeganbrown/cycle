@@ -460,7 +460,9 @@ function integrateTouch (opts, cont) {
 				dragging = true;
 				dragstate = null;
 			}
-			//event.preventDefault();
+			if( navigator.userAgent.match(/android/gi) || location.href.match('testandroid') ) {
+				event.preventDefault();
+			}
 		}
 
 		var dragFrameTick = function () {
@@ -494,7 +496,7 @@ function integrateTouch (opts, cont) {
 
 		var dragMove = function (event) {
 			window.cycle_touchMoveCurrentPos = getTouchPos(event);
-			if ( dragstate === 'dragging' ) {
+			if ( dragstate === 'dragging' || ( navigator.userAgent.match(/android/gi) || location.href.match('testandroid') ) ) {
 				event.preventDefault();
 			}
 		}
