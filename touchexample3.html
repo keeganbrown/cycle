@@ -206,16 +206,22 @@ $(function () {
 			prevElem.stop(true,false).animate( {
 				left: (-mainContSize.width * dir.x * revdir),
 				top: (-mainContSize.height * dir.y * revdir)
-			}, opts.speed/4 );
+			}, opts.speed/4, function () {
+				$(this).css( { transitionDuration: 0, transitionProperty: "" } );
+			} );
 
 			currElem.stop(true,false).animate( {
 				left: 0, top: 0 },
-			opts.speed/4 );
+			opts.speed/4, function () {
+				$(this).css( { transitionDuration: 0, transitionProperty: "" } );
+			} );
 
 			nextElem.stop(true,false).animate( {
 				left: (mainContSize.width * dir.x * revdir),
 				top: (mainContSize.height * dir.y * revdir)
-			}, opts.speed/4 );
+			}, opts.speed/4, function () {
+				$(this).css( { transitionDuration: 0, transitionProperty: "" } );
+			} );
 		}
 	$.fn.cycle.transitions.touchFoldHorz.dragSlideTick = function ( opts, prevElem, currElem, nextElem, diffPos, mainContSize, dir, revdir, currStart ) {
 		var tnsOrg = '50% 50%',
