@@ -193,6 +193,11 @@ $(function () {
 		});
 
 		opts.before.push(function(curr, next, opts, fwd) {
+			$slides.css({
+				transitionProperty : '',
+				transitionDuration : 0
+			});
+
 			var $curr = $(curr),
 				$next = $(next),
 				dirrev = -1,
