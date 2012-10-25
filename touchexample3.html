@@ -74,104 +74,6 @@ $(function () {
 		addSupportFor = totalsup.split('|');
 		$( addSupportFor ).each( $.fn.cycle.checkStyleSupport );
 	}
-	$.fn.cycle.transitions.foldHorz = function($cont, $slides, opts) {
-		if ( !$.fn.cycle.haveCheckedCSS3Support ) {
-			$.fn.cycle.addCSS3Support();
-		}
-		$slides.css({
-			top: 0,
-			left: 0,
-			transformStyle: 'preserve-3d',
-			backfaceVisibility : "hidden",
-			transformOrigin: "50% 50%",
-			transform: "rotateY(0deg) translate3d(0,0,0)",
-			transitionProperty : String($.support['transform']).toLowerCase().replace(/(\w+)(?=transform)/,'-$1-') + ', left',
-			transitionDuration : 0
-		});
-
-		$cont.css({
-			overflow :'hidden',
-			backfaceVisibility : "hidden",
-			transformStyle: 'preserve-3d',
-			perspective: '500px'
-		});
-
-		opts.before.push(function(curr, next, opts, fwd) {
-			var $curr = $(curr),
-				$next = $(next),
-				dirrev = -1,
-				folddir = 1,
-				orgdir = '100% 50%',
-				nextdir = '0% 50%',
-				pushlen = opts.$cont.width();
-
-			if (opts.rev) {
-				fwd = !fwd;
-				dirrev = 1;
-			}
-			if ( !fwd ) {
-				folddir = -1;
-				orgdir = '0% 50%';
-				nextdir = '100% 50%';
-			}
-
-			$.fn.cycle.commonReset(curr,next,opts);
-			$slides.css( { zIndex: "" } );
-
-			opts.cssBefore = {
-				top: 0,
-				left: pushlen*folddir,
-				display : 'block',
-				transform : 'rotateY('+(90*folddir)+'deg) translate3d(0,0,0)',
-				transitionDuration : 0,
-				transformOrigin : nextdir
-			}
-			opts.cssAfter = {
-				top: 0,
-				left: 0,
-				display : 'block',
-				transform : 'rotateY(0deg) translate3d(0,0,0)',
-				transitionDuration : 0,
-				transformOrigin : orgdir
-			}
-			opts.animIn = {}
-			opts.animOut = {}
-
-			$curr.css({
-				top: 0,
-				left: 0,
-				display : 'block',
-				transform : 'rotateY(0deg) translate3d(0,0,0)',
-				transitionDuration : 0,
-				transformOrigin : orgdir
-			});
-			$next.css({
-				top: 0,
-				left: pushlen*folddir,
-				display : 'block',
-				transform : 'rotateY('+(90*folddir)+'deg) translate3d(0,0,0)',
-				transitionDuration : 0,
-				transformOrigin : nextdir
-			});
-			var transition = function () {
-				$curr.css({
-					top: 0,
-					left: pushlen*-folddir,
-					display : 'block',
-					transitionDuration : opts.speed+'ms',
-					transform : 'rotateY('+(90*-folddir)+'deg) translate3d(0,0,0)',
-				});
-				$next.css({
-					top: 0,
-					left: 0,
-					display : 'block',
-					transitionDuration : opts.speed+'ms',
-					transform : 'rotateY(0deg) translate3d(0,0,0)',
-				});
-			}
-			setTimeout( transition, 1);
-		});
-	}
 	$.fn.cycle.transitions.touchFoldHorz = function($cont, $slides, opts) {
 		if ( !$.fn.cycle.haveCheckedCSS3Support ) {
 			$.fn.cycle.addCSS3Support();
@@ -193,11 +95,6 @@ $(function () {
 		});
 
 		opts.before.push(function(curr, next, opts, fwd) {
-			$slides.css({
-				transitionProperty : '',
-				transitionDuration : 0
-			});
-
 			var $curr = $(curr),
 				$next = $(next),
 				dirrev = -1,
@@ -220,8 +117,8 @@ $(function () {
 			$.fn.cycle.commonReset(curr,next,opts);
 			$slides.css( { zIndex: "" } );
 
-			opts.cssBefore = {}
-			opts.cssAfter = {}
+			opts.cssBefore = { transitionProperty : '', transitionDuration : 0 }
+			opts.cssAfter = { transitionProperty : '', transitionDuration : 0 }
 			opts.animIn = {}
 			opts.animOut = {}
 
@@ -370,7 +267,7 @@ $(function () {
 	}
 
 	$('#cycle').cycle({
-		fx: 'foldHorz',
+		fx: 'touchFoldHorz',
 		speed: 500,
 		timeout: 8000,
 		pager: '.pager',
