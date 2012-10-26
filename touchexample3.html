@@ -83,8 +83,10 @@ $(function () {
 			left: 0,
 			transformStyle: 'preserve-3d',
 			backfaceVisibility : "hidden",
-			transitionProperty : String($.support['transform']).toLowerCase().replace(/(\w+)(?=transform)/,'-$1-') + ', left',
-			transitionDuration : opts.speed+'ms'
+			transform: 'rotateY(0deg) translate3d(0,0,0)',
+			transitionDuration: null,
+			transitionProperty: null,
+			display: "block"
 		});
 
 		$cont.css({
@@ -99,7 +101,7 @@ $(function () {
 				$next = $(next),
 				dirrev = -1,
 				folddir = 1,
-				speed = opts.speed;
+				speed = opts.speed,
 				orgdir = '100% 50%',
 				nextdir = '0% 50%',
 				pushlen = opts.$cont.width();
@@ -117,8 +119,8 @@ $(function () {
 			$.fn.cycle.commonReset(curr,next,opts);
 			$slides.css( { zIndex: "" } );
 
-			opts.cssBefore = { transitionProperty : '', transitionDuration : 0 }
-			opts.cssAfter = { transitionProperty : '', transitionDuration : 0 }
+			opts.cssBefore = {}
+			opts.cssAfter = {}
 			opts.animIn = {}
 			opts.animOut = {}
 
@@ -127,14 +129,16 @@ $(function () {
 				left: 0,
 				display : 'block',
 				transitionDuration : 0,
-				transformOrigin : orgdir
+				transformOrigin : orgdir,
+				transitionProperty: String($.support['transform']).toLowerCase().replace(/(\w+)(?=transform)/,'-$1-')
 			});
 			$next.css({
 				top: 0,
 				left: pushlen*folddir,
 				display : 'block',
 				transitionDuration : 0,
-				transformOrigin : nextdir
+				transformOrigin : nextdir,
+				transitionProperty: String($.support['transform']).toLowerCase().replace(/(\w+)(?=transform)/,'-$1-')
 			});
 			var transition = function () {
 				$curr.css({
@@ -165,28 +169,43 @@ $(function () {
 			$( [ prevElem[0], currElem[0], nextElem[0] ] ).css({
 				transform: 'rotateY(0deg) translate3d(0,0,0)',
 				transformStyle: 'preserve-3d',
-				transitionDuration: 0,
-				transitionProperty: String($.support['transform']).toLowerCase().replace(/(\w+)(?=transform)/,'-$1-')
+				transitionDuration: null,
+				transitionProperty: null
 			});
 
 			prevElem.css( {
 				left: (-mainContSize.width * dir.x * revdir) + currStart.x,
 				top: (-mainContSize.height * dir.y * revdir) + currStart.y,
-				transitionDuration: 0, display: 'block', opacity: 1
+				transform: 'rotateY(0deg) translate3d(0,0,0)',
+				transformOrigin: prevdir,
+				display: 'block', opacity: 1,
+				transitionDuration: null,
+				transitionProperty: null
 			} );
 
-			currElem.css( { transform: 'rotateY(0) translate3d(0,0,0)', transitionDuration: 0, transformOrigin: '50% 50%' } );
+			currElem.css( {
+				transform: 'rotateY(0deg) translate3d(0,0,0)',
+				transformOrigin: '50% 50%',
+				transitionDuration: null,
+				transitionProperty: null
+			} );
 
 			nextElem.css( {
 				left: (mainContSize.width * dir.x * revdir) + currStart.x,
 				top: (mainContSize.height * dir.y * revdir) + currStart.y,
 				transform: 'rotateY(0deg) translate3d(0,0,0)',
-				transitionDuration: 0,
 				transformOrigin: nextdir,
-				display: 'block', opacity: 1
+				display: 'block', opacity: 1,
+				transitionDuration: null,
+				transitionProperty: null
 			} );
 		}
 	$.fn.cycle.transitions.touchFoldHorz.snapSlideBack = function ( opts, prevElem, currElem, nextElem, diffPos, mainContSize, dir, revdir, currStart ) {
+			$( [ prevElem[0], currElem[0], nextElem[0] ] ).css({
+				transitionDuration: 0,
+				transitionProperty: String($.support['transform']).toLowerCase().replace(/(\w+)(?=transform)/,'-$1-')
+			});
+
 			prevElem.css({
 				transform: 'rotateY('+(90*-dir)+'deg) translate3d(0,0,0)',
 				transitionDuration: opts.speed/4,
@@ -206,22 +225,14 @@ $(function () {
 			prevElem.stop(true,false).animate( {
 				left: (-mainContSize.width * dir.x * revdir),
 				top: (-mainContSize.height * dir.y * revdir)
-			}, opts.speed/4, function () {
-				$(this).css( { transitionDuration: 0, transitionProperty: "" } );
-			} );
+			}, opts.speed/4 );
 
-			currElem.stop(true,false).animate( {
-				left: 0, top: 0 },
-			opts.speed/4, function () {
-				$(this).css( { transitionDuration: 0, transitionProperty: "" } );
-			} );
+			currElem.stop(true,false).animate( { left: 0, top: 0 }, opts.speed/4 );
 
 			nextElem.stop(true,false).animate( {
 				left: (mainContSize.width * dir.x * revdir),
 				top: (mainContSize.height * dir.y * revdir)
-			}, opts.speed/4, function () {
-				$(this).css( { transitionDuration: 0, transitionProperty: "" } );
-			} );
+			}, opts.speed/4 );
 		}
 	$.fn.cycle.transitions.touchFoldHorz.dragSlideTick = function ( opts, prevElem, currElem, nextElem, diffPos, mainContSize, dir, revdir, currStart ) {
 		var tnsOrg = '50% 50%',
@@ -229,12 +240,10 @@ $(function () {
 				prev: {
 					org: '100% 50%',
 					roty: ( -90 + ( (diffPos.pageX/mainContSize.width) * 90 ) ),
-					disp: ( (diffPos.pageX > 0 ) ? 'block' : 'none' )
 				},
 				next: {
 					org: '0% 50%',
 					roty: ( 90 + ( (diffPos.pageX/mainContSize.width) * 90 ) ),
-					disp: ( (diffPos.pageX < 0 ) ? 'block' : 'none' )
 				}
 			}
 
@@ -247,35 +256,41 @@ $(function () {
 		prevElem.stop(true,false).css( {
 			left: ( ( -mainContSize.width + diffPos.pageX ) * dir.x ) + currStart.x,
 			top: ( ( -mainContSize.height + diffPos.pageY ) * dir.y ) + currStart.y,
+			transitionDuration: null,
+			transitionProperty: null,
 			transform: ('rotateY('+flex.prev.roty+'deg) translate3d(0,0,0)'),
-			transitionDuration: 0,
 			transformOrigin: flex.prev.org,
-			display: flex.prev.disp, opacity: 1
+			display: "block",
+			opacity: 1
 		} );
 
 		currElem.stop(true,false).css( {
 			left: ( ( 0 + diffPos.pageX ) * dir.x ) + currStart.x,
 			top: ( ( 0 + diffPos.pageY ) * dir.y ) + currStart.y,
 			transform: ('rotateY('+( (diffPos.pageX/mainContSize.width)*90 )+'deg) translate3d(0,0,0)'),
-			transitionDuration: 0,
+			transitionDuration: null,
+			transitionProperty: null,
 			transformOrigin: tnsOrg,
-			display: 'block', opacity: 1
+			display: "block",
+			opacity: 1
 		} );
 
 		nextElem.stop(true,false).css( {
 			left: ( ( mainContSize.width + diffPos.pageX ) * dir.x ) + currStart.x,
 			top: ( ( mainContSize.height + diffPos.pageY ) * dir.y ) + currStart.y,
 			transform: ('rotateY('+flex.next.roty+'deg) translate3d(0,0,0)'),
-			transitionDuration: 0,
+			transitionDuration: null,
+			transitionProperty: null,
 			transformOrigin: flex.next.org,
-			display: flex.next.disp, opacity: 1
+			display: "block",
+			opacity: 1
 		} );
 	}
 
 	$('#cycle').cycle({
 		fx: 'touchFoldHorz',
 		speed: 500,
-		timeout: 8000,
+		timeout: 0,
 		pager: '.pager',
 		touchFx: 'touchFoldHorz',
 		touchClickDrag: true
