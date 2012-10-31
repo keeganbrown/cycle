@@ -479,6 +479,8 @@ function integrateTouch (opts, cont) {
 					if ( !!scrollDifY ) $(window).scrollTop(scrollDifY);
 					if ( !!scrollDifY ) $(window).scrollLeft(scrollDifX);
 				}
+				$cont.trigger("touchend");
+				if (opts.touchClickDrag) { $cont.trigger("mouseup"); }
 			}
 			if ( !!!opts.busy && dragging && dragstate !== 'locked' ) {
 				diffPos.pageX = currPos.pageX - initPos.pageX;
@@ -488,7 +490,9 @@ function integrateTouch (opts, cont) {
 					dragSlideTick( opts, prevElem, currElem, nextElem, diffPos, mainContSize, dir, revdir, currStart );
 					dragstate = 'dragging';
 				} else {
-					snapSlideBack( opts, prevElem, currElem, nextElem, diffPos, mainContSize, dir, revdir, currStart );
+					//snapSlideBack( opts, prevElem, currElem, nextElem, diffPos, mainContSize, dir, revdir, currStart );
+					$cont.trigger("touchend");
+					if (opts.touchClickDrag) { $cont.trigger("mouseup"); }
 				}
 			}
 			window.requestAnimationFrame( dragFrameTick );
