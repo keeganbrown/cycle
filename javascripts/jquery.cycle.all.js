@@ -479,7 +479,6 @@ function integrateTouch (opts, cont) {
 					if ( !!scrollDifY ) $(window).scrollTop(scrollDifY);
 					if ( !!scrollDifY ) $(window).scrollLeft(scrollDifX);
 				}
-				abortDrag();
 			}
 			if ( !!!opts.busy && dragging && dragstate !== 'locked' ) {
 				diffPos.pageX = currPos.pageX - initPos.pageX;
@@ -551,8 +550,7 @@ function integrateTouch (opts, cont) {
 		$cont.bind( {
 			touchstart: dragStart,
 			touchmove: dragMove,
-			touchend: dragEnd,
-			touchcancel: dragCancel
+			touchend: dragEnd
 		} );
 
 		if (opts.touchClickDrag) {
