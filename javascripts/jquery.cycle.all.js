@@ -437,8 +437,9 @@ function integrateTouch (opts, cont) {
 
 		//TOUCHMOD -- TOUCH CORE FUNCTIONALITY -- GETTING POSITION OF TOUCH EVENTS, PREPARING ELEMENTS FOR DRAGGING
 		var dragStart = function (event) {
-			abortDrag();
 			if ( !!!opts.busy ) {
+				abortDrag();
+
 				window.cycle_touchMoveCurrentPos = getTouchPos(event);
 				var currPos = window.cycle_touchMoveCurrentPos;
 
@@ -453,8 +454,8 @@ function integrateTouch (opts, cont) {
 				currElem = $( opts.elements[opts.currSlide] );
 				nextElem = $( opts.elements[nextNum] );
 
-				currStart.x = currElem.position().left;
-				currStart.y = currElem.position().top;
+				currStart.x = 0; //currElem.position().left;
+				currStart.y = 0; //currElem.position().top;
 
 				initSlidePos( opts, prevElem, currElem, nextElem, initPos, mainContSize, dir, revdir, currStart );
 
@@ -536,7 +537,6 @@ function integrateTouch (opts, cont) {
 			}
 		}
 		var abortDrag = function () {
-			snapSlideBack( opts, prevElem, currElem, nextElem, diffPos, mainContSize, dir, revdir, currStart );
 			initPos = getTouchPos();
 			diffPos = getTouchPos();
 			dragging = false;
