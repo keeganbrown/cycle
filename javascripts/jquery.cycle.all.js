@@ -489,7 +489,7 @@ function integrateTouch (opts, cont) {
 					dragSlideTick( opts, prevElem, currElem, nextElem, diffPos, mainContSize, dir, revdir, currStart );
 					dragstate = 'dragging';
 				} else {
-					snapSlideBack( opts, prevElem, currElem, nextElem, diffPos, mainContSize, dir, revdir, currStart );
+					abortDrag();
 				}
 			}
 			window.requestAnimationFrame( dragFrameTick );
