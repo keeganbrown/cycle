@@ -536,6 +536,7 @@ function integrateTouch (opts, cont) {
 			}
 		}
 		var abortDrag = function () {
+			snapSlideBack( opts, prevElem, currElem, nextElem, diffPos, mainContSize, dir, revdir, currStart );
 			initPos = getTouchPos();
 			diffPos = getTouchPos();
 			dragging = false;
