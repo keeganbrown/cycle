@@ -479,7 +479,7 @@ function integrateTouch (opts, cont) {
 					if ( !!scrollDifY ) $(window).scrollTop(scrollDifY);
 					if ( !!scrollDifY ) $(window).scrollLeft(scrollDifX);
 				}
-				snapSlideBack( opts, prevElem, currElem, nextElem, diffPos, mainContSize, dir, revdir, currStart );
+				abortDrag();
 			}
 			if ( !!!opts.busy && dragging && dragstate !== 'locked' ) {
 				diffPos.pageX = currPos.pageX - initPos.pageX;
@@ -489,7 +489,7 @@ function integrateTouch (opts, cont) {
 					dragSlideTick( opts, prevElem, currElem, nextElem, diffPos, mainContSize, dir, revdir, currStart );
 					dragstate = 'dragging';
 				} else {
-					abortDrag();
+					snapSlideBack( opts, prevElem, currElem, nextElem, diffPos, mainContSize, dir, revdir, currStart );
 				}
 			}
 			window.requestAnimationFrame( dragFrameTick );
