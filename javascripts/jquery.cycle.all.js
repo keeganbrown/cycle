@@ -378,7 +378,7 @@ function integrateTouch (opts, cont) {
 			bindClickAndDrag($(cont), onTouchPause, onTouchUnPause );
 		}
 
-		var getTouchPos = function (event) {
+		function getTouchPos (event) {
 			if ( !!event && !!event.originalEvent && !!event.originalEvent.touches ) {
 				return ({ pageX: event.originalEvent.touches[0].pageX, pageY: event.originalEvent.touches[0].pageY });
 			} else if ( !!event && ( !!event.pageX || !!event.pageY ) ) {
@@ -436,7 +436,8 @@ function integrateTouch (opts, cont) {
 		changeCycle = ( !!opts.touchCycleLimit ) ? opts.touchCycleLimit : changeCycle;
 
 		//TOUCHMOD -- TOUCH CORE FUNCTIONALITY -- GETTING POSITION OF TOUCH EVENTS, PREPARING ELEMENTS FOR DRAGGING
-		var dragStart = function (event) {
+		function dragStart (event) {
+			abortDrag();
 			if ( !!!opts.busy ) {
 				window.cycle_touchMoveCurrentPos = getTouchPos(event);
 				var currPos = window.cycle_touchMoveCurrentPos;
@@ -465,7 +466,7 @@ function integrateTouch (opts, cont) {
 			}
 		}
 
-		var dragFrameTick = function () {
+		function dragFrameTick () {
 			var currPos = window.cycle_touchMoveCurrentPos;
 			if ( dragstate !== 'dragging' && !!opts.touchMinDrag &&
 				( Math.abs( diffPos.pageX ) * dir.y > opts.touchMinDrag ||
@@ -494,7 +495,7 @@ function integrateTouch (opts, cont) {
 			window.requestAnimationFrame( dragFrameTick );
 		}
 
-		var dragMove = function (event) {
+		function dragMove (event) {
 			window.cycle_touchMoveCurrentPos = getTouchPos(event);
 			if ( dragstate === 'dragging' || ( navigator.userAgent.match(/android/gi) || location.href.match('testandroid') ) ) {
 				event.preventDefault();
@@ -503,7 +504,7 @@ function integrateTouch (opts, cont) {
 
 		window.cycle_touchMoveCurrentPos = getTouchPos();
 
-		var dragEnd = function (event) {
+		function dragEnd (event) {
 			if ( !!!opts.busy && dragging ) {
 				var cacheOpts = { speed: opts.speed, fx: opts.fx, ease: opts.easing }
 
@@ -534,14 +535,10 @@ function integrateTouch (opts, cont) {
 				dragstate = null;
 			}
 		}
-		var dragCancel = function (e) {
-			if ( !!e.originalEvent && !!e.originalEvent.touches && !!e.originalEvent.touches.length ) {
-				abortDrag();
-			}
+		function dragCancel (e) {
+			abortDrag();
 		}
-		var abortDrag = function () {
-			snapSlideBack( opts, prevElem, currElem, nextElem, initPos, mainContSize, dir, revdir, currStart );
-			
+		function abortDrag () {
 			initPos = getTouchPos();
 			diffPos = getTouchPos();
 			dragging = false;
