@@ -63,7 +63,9 @@
 </div>
 
 <!-- SCRIPTS -- DONT DISPLAY ELEMENTS BENEATH THESE -->
-<script src="javascripts/jquery.cycle.all.js"></script>
+<script type="text/javascript">
+	document.write('<script src="javascripts/jquery.cycle.all.js?r='+Math.random()+'"><\/script>');
+</script>
 <script type="text/javascript">
 $(function () {
 	$.fn.cycle.addCSS3Support = function () {
