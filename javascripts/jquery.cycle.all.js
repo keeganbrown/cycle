@@ -378,7 +378,7 @@ function integrateTouch (opts, cont) {
 			bindClickAndDrag($(cont), onTouchPause, onTouchUnPause );
 		}
 
-		function getTouchPos (event) {
+		var getTouchPos = function (event) {
 			if ( !!event && !!event.originalEvent && !!event.originalEvent.touches ) {
 				return ({ pageX: event.originalEvent.touches[0].pageX, pageY: event.originalEvent.touches[0].pageY });
 			} else if ( !!event && ( !!event.pageX || !!event.pageY ) ) {
@@ -436,7 +436,7 @@ function integrateTouch (opts, cont) {
 		changeCycle = ( !!opts.touchCycleLimit ) ? opts.touchCycleLimit : changeCycle;
 
 		//TOUCHMOD -- TOUCH CORE FUNCTIONALITY -- GETTING POSITION OF TOUCH EVENTS, PREPARING ELEMENTS FOR DRAGGING
-		function dragStart (event) {
+		var dragStart = function (event) {
 			abortDrag();
 			if ( !!!opts.busy ) {
 				window.cycle_touchMoveCurrentPos = getTouchPos(event);
@@ -466,7 +466,7 @@ function integrateTouch (opts, cont) {
 			}
 		}
 
-		function dragFrameTick () {
+		var dragFrameTick = function () {
 			var currPos = window.cycle_touchMoveCurrentPos;
 			if ( dragstate !== 'dragging' && !!opts.touchMinDrag &&
 				( Math.abs( diffPos.pageX ) * dir.y > opts.touchMinDrag ||
@@ -495,7 +495,7 @@ function integrateTouch (opts, cont) {
 			window.requestAnimationFrame( dragFrameTick );
 		}
 
-		function dragMove (event) {
+		var dragMove = function (event) {
 			window.cycle_touchMoveCurrentPos = getTouchPos(event);
 			if ( dragstate === 'dragging' || ( navigator.userAgent.match(/android/gi) || location.href.match('testandroid') ) ) {
 				event.preventDefault();
@@ -504,7 +504,7 @@ function integrateTouch (opts, cont) {
 
 		window.cycle_touchMoveCurrentPos = getTouchPos();
 
-		function dragEnd (event) {
+		var dragEnd = function (event) {
 			if ( !!!opts.busy && dragging ) {
 				var cacheOpts = { speed: opts.speed, fx: opts.fx, ease: opts.easing }
 
@@ -535,15 +535,15 @@ function integrateTouch (opts, cont) {
 				dragstate = null;
 			}
 		}
-		function dragCancel (e) {
-			abortDrag();
-		}
-		function abortDrag () {
+		var abortDrag = function () {
 			initPos = getTouchPos();
 			diffPos = getTouchPos();
 			dragging = false;
 			dragstate = null;
 			opts.busy = false;
+		}
+		var dragCancel = function (e) {
+			abortDrag();
 		}
 
 		$cont.bind( {
