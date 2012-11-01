@@ -9,7 +9,7 @@
  *
  * Touch Support integration features ( "TOUCHMOD" )
  * TOUCHMOD Requires: jQuery v1.4.3 or later
- * Modified By: Keegan Brown -- TOUCHMOD Version: 0.9.6 (26-SEP-2012)
+ * Modified By: Keegan Brown -- TOUCHMOD Version: 0.9.7 (30-OCT-2012)
  *
  */
 ;(function($, undefined) {
@@ -437,9 +437,8 @@ function integrateTouch (opts, cont) {
 
 		//TOUCHMOD -- TOUCH CORE FUNCTIONALITY -- GETTING POSITION OF TOUCH EVENTS, PREPARING ELEMENTS FOR DRAGGING
 		var dragStart = function (event) {
-			if ( !!!opts.busy ) {
-				abortDrag();
-
+			abortDrag();
+			if ( !opts.busy ) {
 				window.cycle_touchMoveCurrentPos = getTouchPos(event);
 				var currPos = window.cycle_touchMoveCurrentPos;
 
@@ -534,6 +533,8 @@ function integrateTouch (opts, cont) {
 
 				dragging = false;
 				dragstate = null;
+			} else {
+				abortDrag();
 			}
 		}
 		var abortDrag = function () {
