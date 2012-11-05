@@ -476,7 +476,7 @@ function integrateTouch (opts, cont) {
 					if ( !!scrollDifY ) $(window).scrollTop(scrollDifY);
 					if ( !!scrollDifY ) $(window).scrollLeft(scrollDifX);
 				}
-				abortDrag();
+				snapSlideBack( opts, prevElem, currElem, nextElem, diffPos, mainContSize, dir, revdir, currStart );
 			}
 			if ( !opts.busy && dragstate === DRAGGING_DRAGSTATE ) {
 				diffPos.pageX = currPos.pageX - initPos.pageX;
