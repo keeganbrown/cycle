@@ -440,7 +440,6 @@ function integrateTouch (opts, cont) {
 
 		//TOUCHMOD -- TOUCH CORE FUNCTIONALITY -- GETTING POSITION OF TOUCH EVENTS, PREPARING ELEMENTS FOR DRAGGING
 		var dragStart = function (event) {
-			!!window.console && console.log("dragStart, dragstate: " + dragstate + ", depends: " + !opts.busy );
 			//if ( !opts.busy ) {
 				window.cycle_touchMoveCurrentPos = getTouchPos(event);
 				var currPos = window.cycle_touchMoveCurrentPos;
@@ -491,8 +490,9 @@ function integrateTouch (opts, cont) {
 		}
 
 		var dragMove = function (event) {
-			!!window.console && console.log("dragMove, dragstate: " + dragstate);
 			//if ( !opts.busy ) {
+				!!window.console && console.log("dragMove BTM, dragstate: " + dragstate );
+
 				window.cycle_touchMoveCurrentPos = getTouchPos(event);
 				if ( !!dragstate && dragstate !== DRAGGING_DRAGSTATE && !!opts.touchMinDrag && ( Math.abs( diffPos.pageX ) * dir.y > opts.touchMinDrag || Math.abs( diffPos.pageY ) * dir.x > opts.touchMinDrag ) ) {
 					dragstate = SCROLLING_DRAGSTATE;
@@ -503,13 +503,14 @@ function integrateTouch (opts, cont) {
 				if ( dragstate === DRAGGING_DRAGSTATE || ( navigator.userAgent.match(/android/gi) || location.href.match('testandroid') ) ) {
 					event.preventDefault();
 				}
+
+				!!window.console && console.log("dragMove BTM, dragstate: " + dragstate );
 			//}
 		}
 
 		window.cycle_touchMoveCurrentPos = getTouchPos();
 
 		var dragEnd = function (event) {
-			!!window.console && console.log("dragEnd, dragstate: " + dragstate + ", depends: " +!opts.busy );
 			if ( /*!opts.busy &&*/ dragstate === DRAGGING_DRAGSTATE ) {
 				var cacheOpts = { speed: opts.speed, fx: opts.fx, ease: opts.easing }
 
