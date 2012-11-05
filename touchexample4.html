@@ -41,11 +41,10 @@
 	</div>
 </div>
 
-<script src="http://debug.phonegap.com/target/target-script-min.js#jquery-touch-cycle-magoo"></script>
-
-
-<!-- SCRIPTS -- DONT DISPLAY ELEMENTS BENEATH THESE -->
 <script type="text/javascript">
+	if ( !!location.href.match("test") ) {
+		document.write('<script src="http://debug.phonegap.com/target/target-script-min.js#jquery-touch-cycle-magoo"><\/script>');
+	}
 	document.write('<script src="javascripts/jquery.cycle.all.js?r='+Math.random()+'"><\/script>');
 </script>
 <script type="text/javascript">
