@@ -458,7 +458,6 @@ function integrateTouch (opts, cont) {
 
 				initSlidePos( opts, prevElem, currElem, nextElem, initPos, mainContSize, dir, revdir, currStart );
 
-				dragstate = DRAGGING_DRAGSTATE;
 			//}
 			if( navigator.userAgent.match(/android/gi) || location.href.match('testandroid') ) {
 				event.preventDefault();
@@ -491,7 +490,7 @@ function integrateTouch (opts, cont) {
 
 		var dragMove = function (event) {
 			//if ( !opts.busy ) {
-				!!window.console && console.log("dragMove BTM, dragstate: " + dragstate );
+				!!window.console && console.log("dragMove TOP, dragstate: " + dragstate );
 
 				window.cycle_touchMoveCurrentPos = getTouchPos(event);
 				if ( !!dragstate && dragstate !== DRAGGING_DRAGSTATE && !!opts.touchMinDrag && ( Math.abs( diffPos.pageX ) * dir.y > opts.touchMinDrag || Math.abs( diffPos.pageY ) * dir.x > opts.touchMinDrag ) ) {
