@@ -494,7 +494,7 @@ function integrateTouch (opts, cont) {
 		}
 
 		var dragMove = function (event) {
-			!!window.console && console.log("dragStart, dragstate: " + dragstate)
+			!!window.console && console.log("dragMove, dragstate: " + dragstate)
 			window.cycle_touchMoveCurrentPos = getTouchPos(event);
 			if ( !!dragstate && dragstate !== DRAGGING_DRAGSTATE && !!opts.touchMinDrag && ( Math.abs( diffPos.pageX ) * dir.y > opts.touchMinDrag || Math.abs( diffPos.pageY ) * dir.x > opts.touchMinDrag ) ) {
 				dragstate = SCROLLING_DRAGSTATE;
@@ -510,8 +510,8 @@ function integrateTouch (opts, cont) {
 		window.cycle_touchMoveCurrentPos = getTouchPos();
 
 		var dragEnd = function (event) {
-			!!window.console && console.log("dragStart, dragstate: " + dragstate + ", depends: " +!opts.busy );
-			if ( !opts.busy && dragstate === DRAGGING_DRAGSTATE ) {
+			!!window.console && console.log("dragEnd, dragstate: " + dragstate + ", depends: " +!opts.busy );
+			if ( dragstate === DRAGGING_DRAGSTATE ) {
 				var cacheOpts = { speed: opts.speed, fx: opts.fx, ease: opts.easing }
 
 				opts.fx = touchFx;
