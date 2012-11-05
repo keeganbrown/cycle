@@ -491,16 +491,18 @@ function integrateTouch (opts, cont) {
 		}
 
 		var dragMove = function (event) {
-			!!window.console && console.log("dragMove, dragstate: " + dragstate)
-			window.cycle_touchMoveCurrentPos = getTouchPos(event);
-			if ( !!dragstate && dragstate !== DRAGGING_DRAGSTATE && !!opts.touchMinDrag && ( Math.abs( diffPos.pageX ) * dir.y > opts.touchMinDrag || Math.abs( diffPos.pageY ) * dir.x > opts.touchMinDrag ) ) {
-				dragstate = SCROLLING_DRAGSTATE;
-			}
-			if ( !!dragstate && dragstate !== SCROLLING_DRAGSTATE && ( Math.abs( diffPos.pageX ) * dir.x > opts.touchMinDrag || Math.abs( diffPos.pageY ) * dir.y > opts.touchMinDrag ) ) {
-				dragstate = DRAGGING_DRAGSTATE;
-			}
-			if ( dragstate === DRAGGING_DRAGSTATE || ( navigator.userAgent.match(/android/gi) || location.href.match('testandroid') ) ) {
-				event.preventDefault();
+			!!window.console && console.log("dragMove, dragstate: " + dragstate);
+			if ( !opts.busy ) {
+				window.cycle_touchMoveCurrentPos = getTouchPos(event);
+				if ( !!dragstate && dragstate !== DRAGGING_DRAGSTATE && !!opts.touchMinDrag && ( Math.abs( diffPos.pageX ) * dir.y > opts.touchMinDrag || Math.abs( diffPos.pageY ) * dir.x > opts.touchMinDrag ) ) {
+					dragstate = SCROLLING_DRAGSTATE;
+				}
+				if ( !!dragstate && dragstate !== SCROLLING_DRAGSTATE && ( Math.abs( diffPos.pageX ) * dir.x > opts.touchMinDrag || Math.abs( diffPos.pageY ) * dir.y > opts.touchMinDrag ) ) {
+					dragstate = DRAGGING_DRAGSTATE;
+				}
+				if ( dragstate === DRAGGING_DRAGSTATE || ( navigator.userAgent.match(/android/gi) || location.href.match('testandroid') ) ) {
+					event.preventDefault();
+				}
 			}
 		}
 
@@ -508,7 +510,7 @@ function integrateTouch (opts, cont) {
 
 		var dragEnd = function (event) {
 			!!window.console && console.log("dragEnd, dragstate: " + dragstate + ", depends: " +!opts.busy );
-			if ( dragstate === DRAGGING_DRAGSTATE ) {
+			if ( !opts.busy && dragstate === DRAGGING_DRAGSTATE ) {
 				var cacheOpts = { speed: opts.speed, fx: opts.fx, ease: opts.easing }
 
 				opts.fx = touchFx;
