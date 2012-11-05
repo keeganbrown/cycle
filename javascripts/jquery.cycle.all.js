@@ -538,6 +538,7 @@ function integrateTouch (opts, cont) {
 			$(opts.elements).stop(true,true);
 			initPos = getTouchPos();
 			diffPos = getTouchPos();
+			
 			dragging = false;
 			dragstate = null;
 			opts.busy = false;
