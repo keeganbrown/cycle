@@ -9,7 +9,7 @@
  *
  * Touch Support integration features ( "TOUCHMOD" )
  * TOUCHMOD Requires: jQuery v1.4.3 or later
- * Modified By: Keegan Brown -- TOUCHMOD Version: 0.9.7 (30-OCT-2012)
+ * Modified By: Keegan Brown -- TOUCHMOD Version: 0.9.7 (05-NOV-2012)
  *
  */
 ;(function($, undefined) {
@@ -437,7 +437,6 @@ function integrateTouch (opts, cont) {
 
 		//TOUCHMOD -- TOUCH CORE FUNCTIONALITY -- GETTING POSITION OF TOUCH EVENTS, PREPARING ELEMENTS FOR DRAGGING
 		var dragStart = function (event) {
-			abortDrag();
 			if ( !opts.busy ) {
 				window.cycle_touchMoveCurrentPos = getTouchPos(event);
 				var currPos = window.cycle_touchMoveCurrentPos;
@@ -468,11 +467,6 @@ function integrateTouch (opts, cont) {
 
 		var dragFrameTick = function () {
 			var currPos = window.cycle_touchMoveCurrentPos;
-			if ( dragstate !== 'dragging' && !!opts.touchMinDrag &&
-				( Math.abs( diffPos.pageX ) * dir.y > opts.touchMinDrag ||
-					Math.abs( diffPos.pageY ) * dir.x > opts.touchMinDrag ) ) {
-				dragstate = 'locked';
-			}
 			if ( dragstate === 'locked' ) {
 				if( navigator.userAgent.match(/android/gi) || location.href.match('testandroid') ) {
 					var scrollDifY = $(window).scrollTop() - ( ( window.cycle_touchMoveCurrentPos.pageY - initPos.pageY ) * dir.x );
@@ -497,6 +491,9 @@ function integrateTouch (opts, cont) {
 
 		var dragMove = function (event) {
 			window.cycle_touchMoveCurrentPos = getTouchPos(event);
+			if ( dragstate !== 'dragging' && !!opts.touchMinDrag && ( Math.abs( diffPos.pageX ) * dir.y > opts.touchMinDrag || Math.abs( diffPos.pageY ) * dir.x > opts.touchMinDrag ) ) {
+				dragstate = 'locked';
+			}
 			if ( dragstate === 'dragging' || ( navigator.userAgent.match(/android/gi) || location.href.match('testandroid') ) ) {
 				event.preventDefault();
 			}
@@ -524,7 +521,9 @@ function integrateTouch (opts, cont) {
 				} else {
 					snapSlideBack( opts, prevElem, currElem, nextElem, diffPos, mainContSize, dir, revdir, currStart );
 				}
-				opts.speed = opts.speedIn = opts.speedOut = cacheOpts.speed;
+				opts.speed = cacheOpts.speed;
+				opts.speedIn = cacheOpts.speed;
+				opts.speedOut = cacheOpts.speed;
 				opts.fx = cacheOpts.fx;
 				opts.easing = cacheOpts.ease;
 
@@ -533,11 +532,10 @@ function integrateTouch (opts, cont) {
 
 				dragging = false;
 				dragstate = null;
-			} else {
-				abortDrag();
 			}
 		}
 		var abortDrag = function () {
+			$(opts.elements).stop(true,true);
 			initPos = getTouchPos();
 			diffPos = getTouchPos();
 			dragging = false;
