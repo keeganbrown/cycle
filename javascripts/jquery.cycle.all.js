@@ -477,13 +477,12 @@ function integrateTouch (opts, cont) {
 					if ( !!scrollDifY ) $(window).scrollLeft(scrollDifX);
 				}
 			}
-			if ( !opts.busy && dragstate !== SCROLLING_DRAGSTATE ) {
+			if ( !opts.busy && dragstate === DRAGGING_DRAGSTATE ) {
 				diffPos.pageX = currPos.pageX - initPos.pageX;
 				diffPos.pageY = currPos.pageY - initPos.pageY;
 
-				if ( dragstate !== SCROLLING_DRAGSTATE && ( Math.abs( diffPos.pageX ) * dir.x > opts.touchMinDrag || Math.abs( diffPos.pageY ) * dir.y > opts.touchMinDrag ) ) {
+				if ( Math.abs( diffPos.pageX ) * dir.x > opts.touchMinDrag || Math.abs( diffPos.pageY ) * dir.y > opts.touchMinDrag ) {
 					dragSlideTick( opts, prevElem, currElem, nextElem, diffPos, mainContSize, dir, revdir, currStart );
-					dragstate = DRAGGING_DRAGSTATE;
 				} else {
 					snapSlideBack( opts, prevElem, currElem, nextElem, diffPos, mainContSize, dir, revdir, currStart );
 				}
