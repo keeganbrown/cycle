@@ -450,8 +450,6 @@ function integrateTouch (opts, cont) {
 				var prevNum = (opts.elements.length + opts.currSlide - 1) % opts.elements.length;
 				var nextNum = (opts.elements.length + opts.currSlide + 1) % opts.elements.length;
 
-				$(opts.elements).stop(true,true);
-
 				prevElem = $( opts.elements[prevNum] );
 				currElem = $( opts.elements[opts.currSlide] );
 				nextElem = $( opts.elements[nextNum] );
@@ -486,7 +484,6 @@ function integrateTouch (opts, cont) {
 				if ( Math.abs( diffPos.pageX ) * dir.x > opts.touchMinDrag || Math.abs( diffPos.pageY ) * dir.y > opts.touchMinDrag ) {
 					dragSlideTick( opts, prevElem, currElem, nextElem, diffPos, mainContSize, dir, revdir, currStart );
 				} else {
-					$(opts.elements).stop(true,true);
 					snapSlideBack( opts, prevElem, currElem, nextElem, diffPos, mainContSize, dir, revdir, currStart );
 				}
 			}
@@ -516,8 +513,6 @@ function integrateTouch (opts, cont) {
 
 				opts.fx = touchFx;
 				opts.easing = 'linear';
-
-				$(opts.elements).stop(true,true);
 
 				var newspeed = 0;
 
@@ -559,7 +554,6 @@ function integrateTouch (opts, cont) {
 			diffPos = getTouchPos();
 
 			dragstate = null;
-			opts.busy = false;
 		}
 		var dragCancel = function (e) {
 			abortDrag();
