@@ -387,8 +387,9 @@ function integrateTouch (opts, cont) {
 			return ({ pageX: 0, pageY: 0 });
 		}
 
-		var SCROLLING_DRAGSTATE = "locked",
-			DRAGGING_DRAGSTATE = "dragging",
+		var SCROLLING_DRAGSTATE = "locked_for_page_scroll",
+			DRAGGING_DRAGSTATE = "dragging_cycle_elements",
+			INIT_DRAGSTATE = "init_draggging",
 			dragstate = null;
 
 		var initPos = getTouchPos(),
@@ -439,8 +440,13 @@ function integrateTouch (opts, cont) {
 		changeCycle = ( !!opts.touchCycleLimit ) ? opts.touchCycleLimit : changeCycle;
 
 		//TOUCHMOD -- TOUCH CORE FUNCTIONALITY -- GETTING POSITION OF TOUCH EVENTS, PREPARING ELEMENTS FOR DRAGGING
+		var abortDrag = function () {
+			initPos = getTouchPos();
+			diffPos = getTouchPos();
+			dragstate = null;
+		}
 		var dragStart = function (event) {
-			//if ( !opts.busy ) {
+			if ( !dragstate ) {
 				window.cycle_touchMoveCurrentPos = getTouchPos(event);
 				var currPos = window.cycle_touchMoveCurrentPos;
 
@@ -453,12 +459,13 @@ function integrateTouch (opts, cont) {
 				currElem = $( opts.elements[opts.currSlide] );
 				nextElem = $( opts.elements[nextNum] );
 
-				currStart.x = 0; //currElem.position().left;
-				currStart.y = 0; //currElem.position().top;
+				currStart.x = currElem.position().left;
+				currStart.y = currElem.position().top;
 
 				initSlidePos( opts, prevElem, currElem, nextElem, initPos, mainContSize, dir, revdir, currStart );
 
-			//}
+				dragstate = INIT_DRAGSTATE;
+			}
 			if( navigator.userAgent.match(/android/gi) || location.href.match('testandroid') ) {
 				event.preventDefault();
 			}
@@ -466,6 +473,10 @@ function integrateTouch (opts, cont) {
 
 		var dragFrameTick = function () {
 			var currPos = window.cycle_touchMoveCurrentPos;
+
+			diffPos.pageX = currPos.pageX - initPos.pageX;
+			diffPos.pageY = currPos.pageY - initPos.pageY;
+
 			if ( dragstate === SCROLLING_DRAGSTATE ) {
 				if( navigator.userAgent.match(/android/gi) || location.href.match('testandroid') ) {
 					var scrollDifY = $(window).scrollTop() - ( ( window.cycle_touchMoveCurrentPos.pageY - initPos.pageY ) * dir.x );
@@ -473,12 +484,8 @@ function integrateTouch (opts, cont) {
 					if ( !!scrollDifY ) $(window).scrollTop(scrollDifY);
 					if ( !!scrollDifY ) $(window).scrollLeft(scrollDifX);
 				}
-				snapSlideBack( opts, prevElem, currElem, nextElem, diffPos, mainContSize, dir, revdir, currStart );
 			}
 			if ( /*!opts.busy &&*/ dragstate === DRAGGING_DRAGSTATE ) {
-				diffPos.pageX = currPos.pageX - initPos.pageX;
-				diffPos.pageY = currPos.pageY - initPos.pageY;
-
 				if ( Math.abs( diffPos.pageX ) * dir.x > opts.touchMinDrag || Math.abs( diffPos.pageY ) * dir.y > opts.touchMinDrag ) {
 					dragSlideTick( opts, prevElem, currElem, nextElem, diffPos, mainContSize, dir, revdir, currStart );
 				} else {
@@ -489,28 +496,30 @@ function integrateTouch (opts, cont) {
 		}
 
 		var dragMove = function (event) {
-			//if ( !opts.busy ) {
-				!!window.console && console.log("dragMove TOP, dragstate: " + dragstate );
+			if ( !!dragstate ) {
+				//!!window.console && console.log( "VARS -- pageX: " + Math.abs( diffPos.pageX ) + " * " + dir.y + " > " + opts.touchMinDrag );
+				//!!window.console && console.log( "SCROLLING_DRAGSTATE: " + (Math.abs( diffPos.pageX ) * dir.y) + " > " + opts.touchMinDrag );
+				!!window.console && console.log( "dragstate: " + dragstate );
 
 				window.cycle_touchMoveCurrentPos = getTouchPos(event);
-				if ( !!dragstate && dragstate !== DRAGGING_DRAGSTATE && !!opts.touchMinDrag && ( Math.abs( diffPos.pageX ) * dir.y > opts.touchMinDrag || Math.abs( diffPos.pageY ) * dir.x > opts.touchMinDrag ) ) {
+
+				if ( dragstate === INIT_DRAGSTATE && ( Math.abs( diffPos.pageX ) * dir.y > opts.touchMinDrag || Math.abs( diffPos.pageY ) * dir.x > opts.touchMinDrag ) ) {
 					dragstate = SCROLLING_DRAGSTATE;
 				}
-				if ( !!dragstate && dragstate !== SCROLLING_DRAGSTATE && ( Math.abs( diffPos.pageX ) * dir.x > opts.touchMinDrag || Math.abs( diffPos.pageY ) * dir.y > opts.touchMinDrag ) ) {
+				if ( dragstate === INIT_DRAGSTATE && ( Math.abs( diffPos.pageX ) * dir.x > opts.touchMinDrag || Math.abs( diffPos.pageY ) * dir.y > opts.touchMinDrag ) ) {
 					dragstate = DRAGGING_DRAGSTATE;
 				}
 				if ( dragstate === DRAGGING_DRAGSTATE || ( navigator.userAgent.match(/android/gi) || location.href.match('testandroid') ) ) {
 					event.preventDefault();
 				}
 
-				!!window.console && console.log("dragMove BTM, dragstate: " + dragstate );
-			//}
+			}
 		}
 
 		window.cycle_touchMoveCurrentPos = getTouchPos();
 
 		var dragEnd = function (event) {
-			if ( /*!opts.busy &&*/ dragstate === DRAGGING_DRAGSTATE ) {
+			if ( /*!opts.busy &&*/ !!dragstate ) {
 				var cacheOpts = { speed: opts.speed, fx: opts.fx, ease: opts.easing }
 
 				opts.fx = touchFx;
@@ -548,11 +557,6 @@ function integrateTouch (opts, cont) {
 				diffPos = getTouchPos();
 
 			}
-		}
-		var abortDrag = function () {
-			initPos = getTouchPos();
-			diffPos = getTouchPos();
-			dragstate = null;
 		}
 		var dragCancel = function (e) {
 			abortDrag();
