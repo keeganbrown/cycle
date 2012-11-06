@@ -466,9 +466,9 @@ function integrateTouch (opts, cont) {
 
 				dragstate = INIT_DRAGSTATE;
 			}
-			if( navigator.userAgent.match(/android/gi) || location.href.match('testandroid') ) {
+			//if( navigator.userAgent.match(/android/gi) || location.href.match('testandroid') ) {
 				event.preventDefault();
-			}
+			//}
 			!!window.console && console.log( "dragStart: " + dragstate );
 		}
 
@@ -479,12 +479,14 @@ function integrateTouch (opts, cont) {
 			diffPos.pageY = currPos.pageY - initPos.pageY;
 
 			if ( dragstate === SCROLLING_DRAGSTATE ) {
+				/*
 				if( navigator.userAgent.match(/android/gi) || location.href.match('testandroid') ) {
 					var scrollDifY = $(window).scrollTop() - ( ( window.cycle_touchMoveCurrentPos.pageY - initPos.pageY ) * dir.x );
 					var scrollDifX = $(window).scrollLeft() - ( ( window.cycle_touchMoveCurrentPos.pageX - initPos.pageX ) * dir.y );
 					if ( !!scrollDifY ) $(window).scrollTop(scrollDifY);
 					if ( !!scrollDifY ) $(window).scrollLeft(scrollDifX);
 				}
+				*/
 			}
 			if ( dragstate === DRAGGING_DRAGSTATE ) {
 				if ( Math.abs( diffPos.pageX ) * dir.x > opts.touchMinDrag || Math.abs( diffPos.pageY ) * dir.y > opts.touchMinDrag ) {
@@ -507,10 +509,9 @@ function integrateTouch (opts, cont) {
 				if ( dragstate === INIT_DRAGSTATE && ( Math.abs( diffPos.pageX ) * dir.x > opts.touchMinDrag || Math.abs( diffPos.pageY ) * dir.y > opts.touchMinDrag ) ) {
 					dragstate = DRAGGING_DRAGSTATE;
 				}
-				if ( dragstate === DRAGGING_DRAGSTATE || ( navigator.userAgent.match(/android/gi) || location.href.match('testandroid') ) ) {
-					event.preventDefault();
-				}
-
+			}
+			if ( dragstate !== SCROLLING_DRAGSTATE ) {
+				event.preventDefault();
 			}
 		}
 
