@@ -9,7 +9,7 @@
  *
  * Touch Support integration features ( "TOUCHMOD" )
  * TOUCHMOD Requires: jQuery v1.4.3 or later
- * Modified By: Keegan Brown -- TOUCHMOD Version: 0.9.7 (05-NOV-2012)
+ * Modified By: Keegan Brown -- TOUCHMOD Version: 0.9.8 (06-NOV-2012)
  *
  */
 ;(function($, undefined) {
@@ -311,7 +311,7 @@ function bindTouchPause ($cont, touchPause, touchUnpause) {
 		touchend: touchUnpause
 	});
 }
-function bindClickAndDrag ($cont, touchPause, touchUnpause) {
+function bindPauseOnClickAndDrag ($cont, touchPause, touchUnpause) {
 	//TOUCHMOD -- CLICK AND DRAG BEHAVIOR
 	// 			  FOR EMULATING TOUCH EVENTS ON DESKTOP
 	$cont.bind({
@@ -375,7 +375,7 @@ function integrateTouch (opts, cont) {
 
 		bindTouchPause($(cont), onTouchPause, onTouchUnPause );
 		if ( !!opts.touchClickDrag ) {
-			bindClickAndDrag($(cont), onTouchPause, onTouchUnPause );
+			bindPauseOnClickAndDrag($(cont), onTouchPause, onTouchUnPause );
 		}
 
 		var getTouchPos = function (event) {
