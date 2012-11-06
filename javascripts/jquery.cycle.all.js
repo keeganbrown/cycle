@@ -509,7 +509,7 @@ function integrateTouch (opts, cont) {
 				}
 			}
 			if ( !!dragstate && dragstate !== SCROLLING_DRAGSTATE ) {
-				event.stopPropagation();
+				event.preventDefault();
 			}
 		}
 
