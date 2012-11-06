@@ -508,8 +508,8 @@ function integrateTouch (opts, cont) {
 					dragstate = DRAGGING_DRAGSTATE;
 				}
 			}
-			if ( dragstate !== SCROLLING_DRAGSTATE ) {
-				event.preventDefault();
+			if ( !!dragstate && dragstate !== SCROLLING_DRAGSTATE ) {
+				event.stopPropagation();
 			}
 		}
 
