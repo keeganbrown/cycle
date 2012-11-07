@@ -501,11 +501,11 @@ function integrateTouch (opts, cont) {
 				!!window.console && console.log( "dragmove: " + dragstate );
 
 				window.cycle_touchMoveCurrentPos = getTouchPos(event);
-				if ( dragstate === INIT_DRAGSTATE && ( Math.abs( diffPos.pageX ) * dir.y > opts.touchMinDrag || Math.abs( diffPos.pageY ) * dir.x > opts.touchMinDrag ) ) {
-					dragstate = SCROLLING_DRAGSTATE;
-				}
 				if ( dragstate === INIT_DRAGSTATE && ( Math.abs( diffPos.pageX ) * dir.x > opts.touchMinDrag || Math.abs( diffPos.pageY ) * dir.y > opts.touchMinDrag ) ) {
 					dragstate = DRAGGING_DRAGSTATE;
+				}
+				if ( dragstate === INIT_DRAGSTATE && ( Math.abs( diffPos.pageX ) * dir.y > opts.touchMinDrag || Math.abs( diffPos.pageY ) * dir.x > opts.touchMinDrag ) ) {
+					dragstate = SCROLLING_DRAGSTATE;
 				}
 			}
 			if ( dragstate === DRAGGING_DRAGSTATE ) {
