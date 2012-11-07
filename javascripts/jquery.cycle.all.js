@@ -297,38 +297,11 @@ $.fn.cycle.addCSS3Support = function () {
 	var extraSupport = [ 'transitionDuration', 'transitionDelay', 'transform', 'transformOrigin', 'transformStyle','transitionProperty', 'transition', 'perspective', 'backfaceVisibility' ];
 
 	var checkSupportForCSS3d = !!navigator.userAgent.match(/ipod|ipad|iphone/gi);
-
 	if ( checkSupportForCSS3d ) {
 		var totalsup = addSupportFor.join('|') + '|' + extraSupport.join('|');
 		addSupportFor = totalsup.split('|');
 	}
 	$( addSupportFor ).each( $.fn.cycle.checkStyleSupport );
-}
-function bindTouchPause ($cont, touchPause, touchUnpause) {
-	//TOUCHMOD -- ADD PAUSE ON TOUCH BINDINGS
-	$cont.bind({
-		touchstart: touchPause,
-		touchend: touchUnpause
-	});
-}
-function bindPauseOnClickAndDrag ($cont, touchPause, touchUnpause) {
-	//TOUCHMOD -- CLICK AND DRAG BEHAVIOR FOR EMULATING TOUCH EVENTS ON DESKTOP
-	$cont.bind({
-		mouseover: touchPause,
-		mouseout: touchUnpause
-	});
-}
-function onTouchPause () {
-	$(this).data( 'touchPauseFlag', true );
-	this.cyclePause++;
-	triggerPause(this, true);
-}
-function onTouchUnPause () {
-	var pauseFlag = !!$(this).data( 'touchPauseFlag' );
-	if (pauseFlag)
-		this.cyclePause--;
-	triggerPause(this, true);
-	$(this).data( 'touchPauseFlag', false );
 }
 
 function destroyTouch (cont, opts) {
@@ -371,12 +344,6 @@ function integrateTouch (opts, cont) {
 	polyfillRequestAnimFrame(window);
 
 	if ( !!supportsTouch && ( !!opts.touchFx || $.fn.cycle.transitions[opts.fx].activeDir ) ) {
-
-		bindTouchPause($(cont), onTouchPause, onTouchUnPause );
-		if ( !!opts.touchClickDrag ) {
-			bindPauseOnClickAndDrag($(cont), onTouchPause, onTouchUnPause );
-		}
-
 		var getTouchPos = function (event) {
 			if ( !!event && !!event.originalEvent && !!event.originalEvent.touches ) {
 				return ({ pageX: event.originalEvent.touches[0].pageX, pageY: event.originalEvent.touches[0].pageY });
@@ -386,24 +353,83 @@ function integrateTouch (opts, cont) {
 			return ({ pageX: 0, pageY: 0 });
 		}
 
+
+
 		var SCROLLING_DRAGSTATE = "locked_for_page_scroll",
 			DRAGGING_DRAGSTATE = "dragging_cycle_elements",
-			INIT_DRAGSTATE = "init_draggging",
-			dragstate = null;
+			INIT_DRAGSTATE = "init_dragging";
 
-		var initPos = getTouchPos(),
-			diffPos = getTouchPos(),
-			prevElem, currElem, nextElem,
-			$cont = opts.$cont,
-			mainContSize = {
-				width: $cont.width(),
-				height: $cont.height()
-			},
-			touchFx = null,
-			dir = { x: 0, y: 0 },
-			currStart = { x: 0, y: 0 },
-			changeCycle = 0,
-			revdir = ( !!opts.rev ) ?  -1 : 1;
+		var $cont = opts.$cont;
+
+		opts.touch = {
+			initPos: getTouchPos(), diffPos: getTouchPos(),
+			prevElem: null, currElem: null, nextElem: null,
+			mainContSize: { width: $cont.width(), height: $cont.height() },
+			touchFx: null,
+			dir: { x: 0, y: 0 },
+			currStart: { x: 0, y: 0 },
+			changeCycle: 0, dragstate: null,
+			revdir: ( ( !!opts.rev ) ?  -1 : 1 )
+		}
+
+		window.opts = opts;
+
+		var bindTouchPause = function ($cont, touchPause, touchUnpause) {
+			$cont.bind({
+				touchstart: touchPause,
+				touchend: touchUnpause
+			});
+		}
+		var bindPauseOnClickAndDrag = function ($cont, touchPause, touchUnpause) {
+			$cont.bind({
+				mouseover: touchPause,
+				mouseout: touchUnpause
+			});
+		}
+		var onTouchPause = function () {
+			$cont.data( 'touchPauseFlag', true );
+			$cont[0].cyclePause++;
+			triggerPause( $cont[0], true );
+		}
+		var onTouchUnPause = function () {
+			var pauseFlag = !!$cont.data( 'touchPauseFlag' );
+			if ( pauseFlag )
+				$cont[0].cyclePause--;
+			triggerPause( $cont[0], true );
+			$cont.data( 'touchPauseFlag', false );
+		}
+
+		bindTouchPause( $(cont), onTouchPause, onTouchUnPause );
+		if ( !!opts.touchClickDrag ) {
+			bindPauseOnClickAndDrag( $(cont), onTouchPause, onTouchUnPause );
+		}
+
+
+		//TOUCHMOD -- HANDLING FOR SCROLLING RESULTING JAVASCRIPT PROBLEMS
+		var abortDrag = function () {
+			opts.touch.initPos = getTouchPos();
+			opts.touch.diffPos = getTouchPos();
+			opts.touch.dragstate = null;
+		}
+		var scrollTimeout = null;
+		var ontimeoutgo = function () {
+			if ( !!opts.busy ) {
+				go( opts.elements, opts, 0, 0 );
+			}
+			if ( !!opts.touch.dragstate ) {
+				abortDrag();
+			}
+		}
+		var onPageScrollHandler = function (e) {
+			if ( !!scrollTimeout ) {
+				clearTimeout( scrollTimeout );
+				scrollTimeout = null;
+			}
+			if ( !!opts.busy || !!opts.touch.dragstate ) {
+				scrollTimeout = setTimeout( ontimeoutgo, 100 )
+			}
+		}
+		$(window).bind('scroll', onPageScrollHandler);
 
 
 		//TOUCHMOD -- ADD CSS RULES TO PREVENT ODD BEHAVIOR, EG SELECTING TEXT WHILE TOUCHMOVE
@@ -414,12 +440,12 @@ function integrateTouch (opts, cont) {
 
 		//TOUCHMOD -- TOUCH TRANSITION & ASSOCIATED OPTIONS
 		if ( !!opts.touchFx && !!$.fn.cycle.transitions[opts.touchFx] ) {
-			touchFx = opts.touchFx;
-			dir = ( !!$.fn.cycle.transitions[opts.touchFx].activeDir ) ? $.fn.cycle.transitions[opts.touchFx].activeDir : { x: 1, y: 0 };
-			if ( !!dir.x ) {
-				changeCycle = (mainContSize.width/4);
-			} else if ( !!dir.y )  {
-				changeCycle = (mainContSize.height/4);
+			opts.touch.touchFx = opts.touchFx;
+			opts.touch.dir = ( !!$.fn.cycle.transitions[opts.touchFx].activeDir ) ? $.fn.cycle.transitions[opts.touchFx].activeDir : { x: 1, y: 0 };
+			if ( !!opts.touch.dir.x ) {
+				opts.touch.changeCycle = (opts.touch.mainContSize.width/4);
+			} else if ( !!opts.touch.dir.y )  {
+				opts.touch.changeCycle = (opts.touch.mainContSize.height/4);
 			}
 
 			//ALLOW USER OPTION TO OVERRIDE DEFAULT TOUCH BEHAVIOR INITIALIZATION
@@ -436,34 +462,30 @@ function integrateTouch (opts, cont) {
 			return false;
 		}
 
-		changeCycle = ( !!opts.touchCycleLimit ) ? opts.touchCycleLimit : changeCycle;
+		opts.touch.changeCycle = ( !!opts.touchCycleLimit ) ? opts.touchCycleLimit : opts.touch.changeCycle;
 
 		//TOUCHMOD -- TOUCH CORE FUNCTIONALITY -- GETTING POSITION OF TOUCH EVENTS, PREPARING ELEMENTS FOR DRAGGING
-		var abortDrag = function () {
-			initPos = getTouchPos();
-			diffPos = getTouchPos();
-			dragstate = null;
-		}
 		var dragStart = function (event) {
-			if ( !dragstate && !opts.busy ) {
+			if ( !opts.touch.dragstate && !opts.busy ) {
 				window.cycle_touchMoveCurrentPos = getTouchPos(event);
 				var currPos = window.cycle_touchMoveCurrentPos;
 
-				initPos.pageX = currPos.pageX - initPos.pageX;
-				initPos.pageY = currPos.pageY - initPos.pageY;
+				opts.touch.initPos.pageX = currPos.pageX - opts.touch.initPos.pageX;
+				opts.touch.initPos.pageY = currPos.pageY - opts.touch.initPos.pageY;
+
 				var prevNum = (opts.elements.length + opts.currSlide - 1) % opts.elements.length;
 				var nextNum = (opts.elements.length + opts.currSlide + 1) % opts.elements.length;
 
-				prevElem = $( opts.elements[prevNum] );
-				currElem = $( opts.elements[opts.currSlide] );
-				nextElem = $( opts.elements[nextNum] );
+				opts.touch.prevElem = $( opts.elements[prevNum] );
+				opts.touch.currElem = $( opts.elements[opts.currSlide] );
+				opts.touch.nextElem = $( opts.elements[nextNum] );
 
-				currStart.x = currElem.position().left;
-				currStart.y = currElem.position().top;
+				opts.touch.currStart.x = opts.touch.currElem.position().left;
+				opts.touch.currStart.y = opts.touch.currElem.position().top;
 
-				initSlidePos( opts, prevElem, currElem, nextElem, initPos, mainContSize, dir, revdir, currStart );
+				initSlidePos( opts, opts.touch.prevElem, opts.touch.currElem, opts.touch.nextElem, opts.touch.initPos, opts.touch.mainContSize, opts.touch.dir, opts.touch.revdir, opts.touch.currStart );
 
-				dragstate = INIT_DRAGSTATE;
+				opts.touch.dragstate = INIT_DRAGSTATE;
 			}
 			if( navigator.userAgent.match(/android/gi) || location.href.match('testandroid') ) {
 				event.preventDefault();
@@ -473,38 +495,38 @@ function integrateTouch (opts, cont) {
 		var dragFrameTick = function () {
 			var currPos = window.cycle_touchMoveCurrentPos;
 
-			diffPos.pageX = currPos.pageX - initPos.pageX;
-			diffPos.pageY = currPos.pageY - initPos.pageY;
+			opts.touch.diffPos.pageX = currPos.pageX - opts.touch.initPos.pageX;
+			opts.touch.diffPos.pageY = currPos.pageY - opts.touch.initPos.pageY;
 
-			if ( dragstate === SCROLLING_DRAGSTATE ) {
+			if ( opts.touch.dragstate === SCROLLING_DRAGSTATE ) {
 				if( navigator.userAgent.match(/android/gi) || location.href.match('testandroid') ) {
-					var scrollDifY = $(window).scrollTop() - ( ( window.cycle_touchMoveCurrentPos.pageY - initPos.pageY - 1 ) * dir.x );
-					var scrollDifX = $(window).scrollLeft() - ( ( window.cycle_touchMoveCurrentPos.pageX - initPos.pageX - 1 ) * dir.y );
+					var scrollDifY = $(window).scrollTop() - ( ( window.cycle_touchMoveCurrentPos.pageY - opts.touch.initPos.pageY - 1 ) * opts.touch.dir.x );
+					var scrollDifX = $(window).scrollLeft() - ( ( window.cycle_touchMoveCurrentPos.pageX - opts.touch.initPos.pageX - 1 ) * opts.touch.dir.y );
 					if ( !!scrollDifY ) $(window).scrollTop(scrollDifY);
-					if ( !!scrollDifY ) $(window).scrollLeft(scrollDifX);
+					if ( !!scrollDifX ) $(window).scrollLeft(scrollDifX);
 				}
 			}
-			if ( dragstate === DRAGGING_DRAGSTATE ) {
-				if ( Math.abs( diffPos.pageX ) * dir.x > opts.touchMinDrag || Math.abs( diffPos.pageY ) * dir.y > opts.touchMinDrag ) {
-					dragSlideTick( opts, prevElem, currElem, nextElem, diffPos, mainContSize, dir, revdir, currStart );
+			if ( opts.touch.dragstate === DRAGGING_DRAGSTATE ) {
+				if ( Math.abs( opts.touch.diffPos.pageX ) * opts.touch.dir.x > opts.touchMinDrag || Math.abs( opts.touch.diffPos.pageY ) * opts.touch.dir.y > opts.touchMinDrag ) {
+					dragSlideTick( opts, opts.touch.prevElem, opts.touch.currElem, opts.touch.nextElem, opts.touch.diffPos, opts.touch.mainContSize, opts.touch.dir, opts.touch.revdir, opts.touch.currStart );
 				} else {
-					snapSlideBack( opts, prevElem, currElem, nextElem, diffPos, mainContSize, dir, revdir, currStart );
+					snapSlideBack( opts, opts.touch.prevElem, opts.touch.currElem, opts.touch.nextElem, opts.touch.diffPos, opts.touch.mainContSize, opts.touch.dir, opts.touch.revdir, opts.touch.currStart );
 				}
 			}
 			window.requestAnimationFrame( dragFrameTick );
 		}
 
 		var dragMove = function (event) {
-			if ( !!dragstate && !opts.busy ) {
+			if ( !!opts.touch.dragstate && !opts.busy ) {
 				window.cycle_touchMoveCurrentPos = getTouchPos(event);
-				if ( dragstate === INIT_DRAGSTATE && ( Math.abs( diffPos.pageX ) * dir.x > opts.touchMinDrag || Math.abs( diffPos.pageY ) * dir.y > opts.touchMinDrag ) ) {
-					dragstate = DRAGGING_DRAGSTATE;
+				if ( opts.touch.dragstate === INIT_DRAGSTATE && ( Math.abs( opts.touch.diffPos.pageX ) * opts.touch.dir.x > opts.touchMinDrag || Math.abs( opts.touch.diffPos.pageY ) * opts.touch.dir.y > opts.touchMinDrag ) ) {
+					opts.touch.dragstate = DRAGGING_DRAGSTATE;
 				}
-				if ( dragstate === INIT_DRAGSTATE && ( Math.abs( diffPos.pageX ) * dir.y > opts.touchMinDrag || Math.abs( diffPos.pageY ) * dir.x > opts.touchMinDrag ) ) {
-					dragstate = SCROLLING_DRAGSTATE;
+				if ( opts.touch.dragstate === INIT_DRAGSTATE && ( Math.abs( opts.touch.diffPos.pageX ) * opts.touch.dir.y > opts.touchMinDrag || Math.abs( opts.touch.diffPos.pageY ) * opts.touch.dir.x > opts.touchMinDrag ) ) {
+					opts.touch.dragstate = SCROLLING_DRAGSTATE;
 				}
 			}
-			if ( dragstate === DRAGGING_DRAGSTATE ) {
+			if ( opts.touch.dragstate === DRAGGING_DRAGSTATE ) {
 				event.preventDefault();
 			}
 		}
@@ -512,46 +534,44 @@ function integrateTouch (opts, cont) {
 		window.cycle_touchMoveCurrentPos = getTouchPos();
 
 		var dragEnd = function (event) {
-			if ( dragstate === DRAGGING_DRAGSTATE ) {
+			if ( opts.touch.dragstate === DRAGGING_DRAGSTATE ) {
 				var cacheOpts = { speed: opts.speed, fx: opts.fx, ease: opts.easing }
-
-				opts.fx = touchFx;
-				opts.easing = 'linear';
-
 				var newspeed = 0;
 
-				if ( !!dir.x && Math.abs(diffPos.pageX) > changeCycle ) {
-					newspeed = Math.round( opts.speed * ( ( mainContSize.width - (mainContSize.width/4) - Math.abs( diffPos.pageX ) ) / mainContSize.width ) ) + 50;
+				opts.fx = opts.touch.touchFx;
+				opts.easing = 'linear';
+
+				if ( !!opts.touch.dir.x && Math.abs(opts.touch.diffPos.pageX) > opts.touch.changeCycle ) {
+					newspeed = Math.round( opts.speed * ( ( opts.touch.mainContSize.width - (opts.touch.mainContSize.width/4) - Math.abs( opts.touch.diffPos.pageX ) ) / opts.touch.mainContSize.width ) ) + 50;
 					opts.speed = newspeed;
 					opts.speedIn = newspeed;
 					opts.speedOut = newspeed;
 
-					if ( diffPos.pageX <= 0) advance(opts,1);
-					if ( diffPos.pageX > 0) advance(opts,0);
-				} else if ( !!dir.y && Math.abs(diffPos.pageY) > changeCycle ) {
-					newspeed = Math.round( opts.speed * ( ( mainContSize.height - (mainContSize.height/4) - Math.abs( diffPos.pageY ) ) / mainContSize.height ) ) + 50;
+					if ( opts.touch.diffPos.pageX <= 0) advance(opts,1);
+					if ( opts.touch.diffPos.pageX > 0) advance(opts,0);
+				} else if ( !!opts.touch.dir.y && Math.abs(opts.touch.diffPos.pageY) > opts.touch.changeCycle ) {
+					newspeed = Math.round( opts.speed * ( ( opts.touch.mainContSize.height - (opts.touch.mainContSize.height/4) - Math.abs( opts.touch.diffPos.pageY ) ) / opts.touch.mainContSize.height ) ) + 50;
 					opts.speed = newspeed;
 					opts.speedIn = newspeed;
 					opts.speedOut = newspeed;
 
-					if ( diffPos.pageY <= 0) advance(opts,1);
-					if ( diffPos.pageY > 0) advance(opts,0);
+					if ( opts.touch.diffPos.pageY <= 0) advance(opts,1);
+					if ( opts.touch.diffPos.pageY > 0) advance(opts,0);
 				} else {
-					snapSlideBack( opts, prevElem, currElem, nextElem, diffPos, mainContSize, dir, revdir, currStart );
+					snapSlideBack( opts, opts.touch.prevElem, opts.touch.currElem, opts.touch.nextElem, opts.touch.diffPos, opts.touch.mainContSize, opts.touch.dir, opts.touch.revdir, opts.touch.currStart );
 				}
-				dragstate = null;
+				opts.touch.dragstate = null;
 				opts.speed = cacheOpts.speed;
 				opts.speedIn = cacheOpts.speed;
 				opts.speedOut = cacheOpts.speed;
 				opts.fx = cacheOpts.fx;
 				opts.easing = cacheOpts.ease;
 
-				initPos = getTouchPos();
-				diffPos = getTouchPos();
-			} else if ( dragstate === SCROLLING_DRAGSTATE ) {
+				opts.touch.initPos = getTouchPos();
+				opts.touch.diffPos = getTouchPos();
+			} else {
 				abortDrag();
 			}
-			!!window.console && console.log( "dragEnd: " + dragstate );
 		}
 		var dragCancel = function (e) {
 			abortDrag();
