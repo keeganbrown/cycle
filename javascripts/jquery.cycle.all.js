@@ -446,7 +446,7 @@ function integrateTouch (opts, cont) {
 			dragstate = null;
 		}
 		var dragStart = function (event) {
-			if ( !dragstate ) {
+			if ( !dragstate && !opts.busy ) {
 				window.cycle_touchMoveCurrentPos = getTouchPos(event);
 				var currPos = window.cycle_touchMoveCurrentPos;
 
@@ -497,9 +497,7 @@ function integrateTouch (opts, cont) {
 		}
 
 		var dragMove = function (event) {
-			if ( !!dragstate ) {
-				!!window.console && console.log( "dragmove: " + dragstate );
-
+			if ( !!dragstate && !opts.busy ) {
 				window.cycle_touchMoveCurrentPos = getTouchPos(event);
 				if ( dragstate === INIT_DRAGSTATE && ( Math.abs( diffPos.pageX ) * dir.x > opts.touchMinDrag || Math.abs( diffPos.pageY ) * dir.y > opts.touchMinDrag ) ) {
 					dragstate = DRAGGING_DRAGSTATE;
@@ -507,6 +505,9 @@ function integrateTouch (opts, cont) {
 				if ( dragstate === INIT_DRAGSTATE && ( Math.abs( diffPos.pageX ) * dir.y > opts.touchMinDrag || Math.abs( diffPos.pageY ) * dir.x > opts.touchMinDrag ) ) {
 					dragstate = SCROLLING_DRAGSTATE;
 				}
+			}
+			if ( opts.busy ) {
+				abortDrag();
 			}
 			if ( dragstate === DRAGGING_DRAGSTATE ) {
 				event.preventDefault();
