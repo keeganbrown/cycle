@@ -312,8 +312,7 @@ function bindTouchPause ($cont, touchPause, touchUnpause) {
 	});
 }
 function bindPauseOnClickAndDrag ($cont, touchPause, touchUnpause) {
-	//TOUCHMOD -- CLICK AND DRAG BEHAVIOR
-	// 			  FOR EMULATING TOUCH EVENTS ON DESKTOP
+	//TOUCHMOD -- CLICK AND DRAG BEHAVIOR FOR EMULATING TOUCH EVENTS ON DESKTOP
 	$cont.bind({
 		mouseover: touchPause,
 		mouseout: touchUnpause
@@ -558,12 +557,12 @@ function integrateTouch (opts, cont) {
 			abortDrag();
 		}
 
-		$cont.bind( {
+		$cont.bind({
 			touchstart: dragStart,
 			touchmove: dragMove,
 			touchend: dragEnd,
 			touchcancel: dragCancel
-		} );
+		});
 
 		if (opts.touchClickDrag) {
 			$cont.bind({
@@ -1270,14 +1269,7 @@ $.fn.cycle.createPagerAnchor = function(i, el, $p, els, opts) {
 		$a.hover(pagerFn, function(){/* no-op */} );
 	}
 	else {
-		// TOUCHMOD -- INTEGRATE TOUCH FUNCTIONALITY INTO PAGERS
-		if ( !supportsTouch ) {
-			$a.bind(opts.pagerEvent, pagerFn);
-		} else {
-			$a.bind(opts.touchPagerEvent, pagerFn);
-			$a.bind(opts.pagerEvent, function (e) { e.preventDefault(); });
-			//$a.bind(opts.pagerEvent, pagerFn);
-		}
+		$a.bind(opts.pagerEvent, pagerFn);
 	}
 
 	if ( ! /^click/.test(opts.pagerEvent) && !opts.allowPagerClickBubble)
@@ -1401,7 +1393,7 @@ $.fn.cycle.defaults = {
     autostop:         0,        // true to end slideshow after X transitions (where X == slide count)
     autostopCount:    0,        // number of transitions (optionally used with autostop to define X)
     backwards:        false,    // true to start slideshow at last slide and move backwards through the stack
-    before:           null,     // transition callback (scope set to element to be shown):     function(currSlideElement, nextSlideElement, options, forwardFlag)
+    before:           null,     // transition callback (scope set to element to be shown): function(currSlideElement, nextSlideElement, options, forwardFlag)
     center:           null,     // set to true to have cycle add top/left margin to each slide (use with width and height options)
     cleartype:        !$.support.opacity,  // true if clearType corrections should be applied (for IE)
     cleartypeNoBg:    false,    // set to true to disable extra cleartype fixing (leave false to force background color setting on slides)
@@ -1448,11 +1440,10 @@ $.fn.cycle.defaults = {
     sync:             1,        // true if in/out transitions should occur simultaneously
     timeout:          4000,     // milliseconds between slide transitions (0 to disable auto advance)
     timeoutFn:        null,     // callback for determining per-slide timeout value:  function(currSlideElement, nextSlideElement, options, forwardFlag)
-	touchFx:	   null,  // name of touch transition effect. Touch Functionality will not be enabled if left "null" or "false"
+	touchFx:	   	  null,  // name of touch transition effect. Touch Functionality will not be enabled if left "null" or "false"
 	touchCycleLimit:  0,  // Number (in px) for touch gesture before a touchend event will force a cycle.
 	touchClickDrag:   0,  // true to enable mouse slide-dragging.
 	touchMinDrag: 	  0,  // Minimum (in px) before touch handling will effect positioning of the cycle
-	touchPagerEvent: 'touchstart.cycle', //Touch Event to use for pagers.
     updateActivePagerLink: null,// callback fn invoked to update the active pager link (adds/removes activePagerClass style)
     width:            null      // container width (if the 'fit' option is true, the slides will be set to this width as well)
 };
