@@ -42,17 +42,24 @@
 </div>
 
 <script type="text/javascript">
-	if ( !!location.href.match("test") ) {
+	if ( !!location.href.match("debug") ) {
 		document.write('<script src="http://debug.phonegap.com/target/target-script-min.js#jquery-touch-cycle-magoo"><\/script>');
 	}
-	document.write('<script src="javascripts/jquery.cycle.all.js?r='+Math.random()+'"><\/script>');
+	if ( !!location.href.match("dev") ) {
+		document.write('<script src="javascripts/jquery.cycle.all.js?r='+Math.random()+'"><\/script>');
+	} else if ( !!location.href.match("test") ) {
+		document.write('<script src="javascripts/test.jquery.cycle.all.js?r='+Math.random()+'"><\/script>');
+	} else {
+		document.write('<script src="//raw.github.com/keeganbrown/cycle/master/jquery.cycle.all.js"><\/script>');
+	}
 </script>
+
 <script type="text/javascript">
 $(document).ready(function () {
 	$('#cycle').cycle({
 		fx: 'scrollHorz',
 		speed: 500,
-		timeout: 0,
+		timeout: 2000,
 		pager: '.pager',
 		rev: 0,
 		touchMinDrag: 5,
