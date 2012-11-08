@@ -448,10 +448,9 @@ function integrateTouch (opts, cont) {
 			$.fn.cycle.resetState(opts);
 		}
 		var dragStart = function (event) {
-			if( !!opts.busy && !( navigator.userAgent.match(/android/gi) || location.href.match('testandroid') ) ) {
-				event.preventDefault();
-				resetTransition();
-			}
+			if( !!opts.busy && !( navigator.userAgent.match(/android/gi) || location.href.match('testandroid') ) ) { event.preventDefault(); }
+			if( !!opts.busy ) { resetTransition(); }
+
 			if ( !opts.touch.dragstate && !opts.busy ) {
 				window.cycle_touchMoveCurrentPos = getTouchPos(event);
 				var currPos = window.cycle_touchMoveCurrentPos;
@@ -501,7 +500,7 @@ function integrateTouch (opts, cont) {
 					opts.touch.dragstate = SCROLLING_DRAGSTATE;
 				}
 			}
-			if ( ( opts.touch.dragstate === DRAGGING_DRAGSTATE || !!opts.busy ) && !( navigator.userAgent.match(/android/gi) || location.href.match('testandroid') ) ) {
+			if ( opts.touch.dragstate === DRAGGING_DRAGSTATE || !!opts.busy ) {
 				event.preventDefault();
 			}
 		}
