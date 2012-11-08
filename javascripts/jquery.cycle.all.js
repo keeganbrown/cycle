@@ -372,7 +372,7 @@ function integrateTouch (opts, cont) {
 			revdir: ( ( !!opts.rev ) ?  -1 : 1 )
 		}
 
-		window.opts = opts;
+		//window.opts = opts;
 
 		var bindTouchPause = function ($cont, touchPause, touchUnpause) {
 			$cont.bind({
@@ -526,7 +526,7 @@ function integrateTouch (opts, cont) {
 					opts.touch.dragstate = SCROLLING_DRAGSTATE;
 				}
 			}
-			if ( opts.touch.dragstate === DRAGGING_DRAGSTATE ) {
+			if ( opts.touch.dragstate === DRAGGING_DRAGSTATE || opts.busy ) {
 				event.preventDefault();
 			}
 		}
