@@ -487,7 +487,7 @@ function integrateTouch (opts, cont) {
 
 				opts.touch.dragstate = INIT_DRAGSTATE;
 			}
-			if( navigator.userAgent.match(/android/gi) || location.href.match('testandroid') ) {
+			if( !!opts.busy || navigator.userAgent.match(/android/gi) || location.href.match('testandroid') ) {
 				event.preventDefault();
 			}
 		}
@@ -526,7 +526,7 @@ function integrateTouch (opts, cont) {
 					opts.touch.dragstate = SCROLLING_DRAGSTATE;
 				}
 			}
-			if ( opts.touch.dragstate === DRAGGING_DRAGSTATE || opts.busy ) {
+			if ( opts.touch.dragstate === DRAGGING_DRAGSTATE || !!opts.busy ) {
 				event.preventDefault();
 			}
 		}
