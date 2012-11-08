@@ -401,38 +401,18 @@ function integrateTouch (opts, cont) {
 			bindPauseOnClickAndDrag( $(cont), onTouchPause, onTouchUnPause );
 		}
 
-
 		//TOUCHMOD -- HANDLING FOR SCROLLING RESULTING JAVASCRIPT PROBLEMS
 		var abortDrag = function () {
 			opts.touch.initPos = getTouchPos();
 			opts.touch.diffPos = getTouchPos();
 			opts.touch.dragstate = null;
 		}
-		/*
-		var scrollTimeout = null;
-		var ontimeoutgo = function () {
-			if ( !!opts.busy ) {
-				go( opts.elements, opts, 0, 0 );
-			}
-			if ( !!opts.touch.dragstate ) {
-				abortDrag();
-			}
-		}
-		var onPageScrollHandler = function (e) {
-			if ( !!scrollTimeout ) {
-				clearTimeout( scrollTimeout );
-				scrollTimeout = null;
-			}
-			if ( !!opts.busy || !!opts.touch.dragstate ) {
-				scrollTimeout = setTimeout( ontimeoutgo, 100 )
-			}
-		}
-		$(window).bind('scroll', onPageScrollHandler);
-		*/
-
 
 		//TOUCHMOD -- ADD CSS RULES TO PREVENT ODD BEHAVIOR, EG SELECTING TEXT WHILE TOUCHMOVE
-		$(opts.elements).css( { userSelect: 'none', userModify: 'read-only', userDrag: 'none', tapHighlightColor: 'transparent' } );
+		$(opts.elements).css( {
+			userSelect: 'none', userModify: 'read-only',
+			userDrag: 'none', tapHighlightColor: 'transparent'
+		} );
 
 		//TOUCHMOD -- TOUCH BEHAVIOR INITIALIZATION
 		var initSlidePos, snapSlideBack, dragSlideTick;
@@ -471,7 +451,6 @@ function integrateTouch (opts, cont) {
 			if( !!opts.busy || navigator.userAgent.match(/android/gi) || location.href.match('testandroid') ) {
 				event.preventDefault();
 				resetTransition();
-				window.opts = opts;
 			}
 			if ( !opts.touch.dragstate && !opts.busy ) {
 				window.cycle_touchMoveCurrentPos = getTouchPos(event);
@@ -504,10 +483,12 @@ function integrateTouch (opts, cont) {
 
 			if ( opts.touch.dragstate === SCROLLING_DRAGSTATE ) {
 				if( navigator.userAgent.match(/android/gi) || location.href.match('testandroid') ) {
+					/*
 					var scrollDifY = $(window).scrollTop() - ( ( window.cycle_touchMoveCurrentPos.pageY - opts.touch.initPos.pageY - 1 ) * opts.touch.dir.x );
 					var scrollDifX = $(window).scrollLeft() - ( ( window.cycle_touchMoveCurrentPos.pageX - opts.touch.initPos.pageX - 1 ) * opts.touch.dir.y );
 					if ( !!scrollDifY ) $(window).scrollTop(scrollDifY);
 					if ( !!scrollDifX ) $(window).scrollLeft(scrollDifX);
+					*/
 				}
 			}
 			if ( opts.touch.dragstate === DRAGGING_DRAGSTATE ) {
