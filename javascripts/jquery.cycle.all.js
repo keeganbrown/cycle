@@ -448,7 +448,7 @@ function integrateTouch (opts, cont) {
 			$.fn.cycle.resetState(opts);
 		}
 		var dragStart = function (event) {
-			if( !!opts.busy && !( navigator.userAgent.match(/android/gi) || location.href.match('testandroid') ) ) { event.preventDefault(); }
+			if( !!opts.busy || !!( navigator.userAgent.match(/android/gi) || location.href.match('testandroid') ) ) { event.preventDefault(); }
 			if( !!opts.busy ) { resetTransition(); }
 
 			if ( !opts.touch.dragstate && !opts.busy ) {
