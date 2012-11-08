@@ -9,7 +9,7 @@
  *
  * Touch Support integration features ( "TOUCHMOD" )
  * TOUCHMOD Requires: jQuery v1.4.3 or later
- * Modified By: Keegan Brown -- TOUCHMOD Version: 0.9.8 (06-NOV-2012)
+ * Modified By: Keegan Brown -- TOUCHMOD Version: 0.9.8 (08-NOV-2012)
  *
  */
 ;(function($, undefined) {
