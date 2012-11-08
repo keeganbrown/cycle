@@ -373,7 +373,6 @@ function integrateTouch (opts, cont) {
 		}
 
 		//window.opts = opts;
-
 		var bindTouchPause = function ($cont, touchPause, touchUnpause) {
 			$cont.bind({
 				touchstart: touchPause,
@@ -411,6 +410,7 @@ function integrateTouch (opts, cont) {
 			opts.touch.diffPos = getTouchPos();
 			opts.touch.dragstate = null;
 		}
+		/*
 		var scrollTimeout = null;
 		var ontimeoutgo = function () {
 			if ( !!opts.busy ) {
@@ -430,6 +430,7 @@ function integrateTouch (opts, cont) {
 			}
 		}
 		$(window).bind('scroll', onPageScrollHandler);
+		*/
 
 
 		//TOUCHMOD -- ADD CSS RULES TO PREVENT ODD BEHAVIOR, EG SELECTING TEXT WHILE TOUCHMOVE
@@ -465,6 +466,20 @@ function integrateTouch (opts, cont) {
 		opts.touch.changeCycle = ( !!opts.touchCycleLimit ) ? opts.touchCycleLimit : opts.touch.changeCycle;
 
 		//TOUCHMOD -- TOUCH CORE FUNCTIONALITY -- GETTING POSITION OF TOUCH EVENTS, PREPARING ELEMENTS FOR DRAGGING
+		var resetTransition = function () {
+			var p = opts.$cont[0], curr = opts.elements[opts.currSlide], next = opts.elements[opts.nextSlide];
+			$.fn.cycle.resetState(opts, opts.fx);
+			if ( !!opts.busy ) {
+				opts.busy = 0;
+				$.each(opts.after, function(i,o) {
+					if (p.cycleStop != opts.stopCount) return;
+					o.apply(next, [curr, next, opts, 1]);
+				});
+				if (!p.cycleStop) {
+					//queueNext();
+				}
+			}
+		}
 		var dragStart = function (event) {
 			if ( !opts.touch.dragstate && !opts.busy ) {
 				window.cycle_touchMoveCurrentPos = getTouchPos(event);
@@ -489,6 +504,7 @@ function integrateTouch (opts, cont) {
 			}
 			if( !!opts.busy || navigator.userAgent.match(/android/gi) || location.href.match('testandroid') ) {
 				event.preventDefault();
+				resetTransition();
 			}
 		}
 
