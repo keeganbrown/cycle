@@ -15,7 +15,7 @@
 ;(function($, undefined) {
 "use strict";
 
-var ver = '2.9999.5';
+var ver = '2.9999.5' + " + TOUCHMOD";
 
 // if $.support is not defined (pre jQuery 1.3) add what I need
 if ($.support === undefined) {
@@ -353,8 +353,6 @@ function integrateTouch (opts, cont) {
 			return ({ pageX: 0, pageY: 0 });
 		}
 
-
-
 		var SCROLLING_DRAGSTATE = "locked_for_page_scroll",
 			DRAGGING_DRAGSTATE = "dragging_cycle_elements",
 			INIT_DRAGSTATE = "init_dragging";
@@ -467,20 +465,14 @@ function integrateTouch (opts, cont) {
 
 		//TOUCHMOD -- TOUCH CORE FUNCTIONALITY -- GETTING POSITION OF TOUCH EVENTS, PREPARING ELEMENTS FOR DRAGGING
 		var resetTransition = function () {
-			var p = opts.$cont[0], curr = opts.elements[opts.currSlide], next = opts.elements[opts.nextSlide];
-			$.fn.cycle.resetState(opts, opts.fx);
-			if ( !!opts.busy ) {
-				opts.busy = 0;
-				$.each(opts.after, function(i,o) {
-					if (p.cycleStop != opts.stopCount) return;
-					o.apply(next, [curr, next, opts, 1]);
-				});
-				if (!p.cycleStop) {
-					//queueNext();
-				}
-			}
+			$.fn.cycle.resetState(opts);
 		}
 		var dragStart = function (event) {
+			if( !!opts.busy || navigator.userAgent.match(/android/gi) || location.href.match('testandroid') ) {
+				event.preventDefault();
+				resetTransition();
+				window.opts = opts;
+			}
 			if ( !opts.touch.dragstate && !opts.busy ) {
 				window.cycle_touchMoveCurrentPos = getTouchPos(event);
 				var currPos = window.cycle_touchMoveCurrentPos;
@@ -501,10 +493,6 @@ function integrateTouch (opts, cont) {
 				initSlidePos( opts, opts.touch.prevElem, opts.touch.currElem, opts.touch.nextElem, opts.touch.initPos, opts.touch.mainContSize, opts.touch.dir, opts.touch.revdir, opts.touch.currStart );
 
 				opts.touch.dragstate = INIT_DRAGSTATE;
-			}
-			if( !!opts.busy || navigator.userAgent.match(/android/gi) || location.href.match('testandroid') ) {
-				event.preventDefault();
-				resetTransition();
 			}
 		}
 
