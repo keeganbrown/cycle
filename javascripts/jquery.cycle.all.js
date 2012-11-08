@@ -372,13 +372,13 @@ function integrateTouch (opts, cont) {
 
 		//window.opts = opts;
 		var bindTouchPause = function ($cont, touchPause, touchUnpause) {
-			$cont.bind({
+			$(window).bind({
 				touchstart: touchPause,
 				touchend: touchUnpause
 			});
 		}
 		var bindPauseOnClickAndDrag = function ($cont, touchPause, touchUnpause) {
-			$cont.bind({
+			$(window).bind({
 				mouseover: touchPause,
 				mouseout: touchUnpause
 			});
